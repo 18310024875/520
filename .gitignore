@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+.vscode
+tmp_uploads/
+www/avatar/
+www/files/
+web/
+dist/
+/node_modules/
+npm-debug.log
+package-lock.json
