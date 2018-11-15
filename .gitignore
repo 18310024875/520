@@ -1,9 +1,9 @@
 .DS_Store
 .idea
 .vscode
-tmp_uploads/:
-avatar/:
-files/:
+app-server/tmp_uploads/:
+app-server/avatar/:
+fapp-server/iles/:
 web/
 dist/
 /node_modules/
