@@ -2,8 +2,8 @@
 .idea
 .vscode
 tmp_uploads/
-www/avatar/
-www/files/
+avatar/
+files/
 web/
 dist/
 /node_modules/
