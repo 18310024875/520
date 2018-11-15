@@ -1,11 +1,11 @@
 .DS_Store
 .idea
 .vscode
-app-server/tmp_uploads/
-app-server/avatar/
-*/fapp-server/files/
-*/web/
-*/dist/
-*/node_modules/
+tmp_uploads/
+avatar/
+files/
+web/
+dist/
+node_modules/
 npm-debug.log
 package-lock.json
