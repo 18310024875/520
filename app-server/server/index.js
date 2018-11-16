@@ -7,7 +7,7 @@ var app = require('./s.app');
 // 服务链接scoket的方法 ;
 var connectIo = require('./s.connect-socket.io');
 // mysql配置 ;
-// var mysql = require('./s.mysql');
+var mysql = require('./s.mysql');
 // upload配置 ;
 var upload = require('./s.upload');
 
@@ -27,5 +27,5 @@ global.G = {
 	IO:io ,
 	UPLOAD:upload ,
 	SERVER:server ,
-	// MYSQL:mysql
+	MYSQL:mysql
 };

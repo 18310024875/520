@@ -62,8 +62,6 @@ app.use(function(req, res, next) {
 
 // 报错处理 ;
 app.use(function(err, req, res, next) {
-
-	// console.log(1,err)
 	// 默认development
 	res.locals.message = err.message;
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
