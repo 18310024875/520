@@ -1,4 +1,0 @@
-::ffff:172.24.139.2 - GET /room/detail?timestamp=1531384551466&room_id=1531373749000 HTTP/1.1 404 181 - 14.207 ms
-::ffff:172.24.139.2 - POST /room/talkList?timestamp=1531384551468 HTTP/1.1 404 181 - 1.415 ms
-::ffff:172.24.139.2 - GET /user/getUserInfo?timestamp=1531392524042 HTTP/1.1 404 181 - 17.751 ms
-::ffff:172.24.139.2 - GET /user/getUserInfo?timestamp=1531392579610 HTTP/1.1 404 181 - 1.354 ms

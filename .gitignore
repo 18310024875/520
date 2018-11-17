@@ -4,6 +4,9 @@
 tmp_uploads/
 avatar/
 files/
+dist/
+web/
 node_modules/
 npm-debug.log
+server.log
 package-lock.json
