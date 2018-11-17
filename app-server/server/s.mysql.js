@@ -43,7 +43,7 @@ const mariasql = require('mariasql');
 var Client = new mariasql({
 	host: '127.0.0.1',
 	user: 'root',
-	password: 'qwer',
+	password: '',
 	db: 'chen'
 })
 
