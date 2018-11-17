@@ -11,7 +11,10 @@ var Client = new mariasql({
 })
 
 
-
+var os=require('os');
+var platform=os.platform();
+var hostname=os.hostname()
+console.log(platform,hostname)
 Client.query(`SELECT * FROM user` , (err,res)=>{
 	console.log(err,res)
 })
@@ -30,8 +33,6 @@ Client.$query=function( sql , yes , no ){
 		}
 	});
 };
-
-console.log('9999' , Client)
 
 
 // 导出 ;
