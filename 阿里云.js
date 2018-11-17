@@ -36,11 +36,16 @@ ssh连接-->远程连接
 
 数据库MariaDB --->
 	( yum -y install mariadb mariadb-server ---> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpass');  )
-	root qwer 
+	账号 root 
+	密码 qwer 
 	systemctl start mariadb
 	systemctl restart mariadb
 	systemctl stop mariadb
 	SHOW VARIABLES LIKE 'character%'
+
+
+远程连接数据库 --->
+mysql -h 39.105.201.170 -P 3306 -uroot -pqwer
 
 
 教程 --->
@@ -68,6 +73,8 @@ ssh连接-->远程连接
 页面地址
 	http://39.105.201.170:3000/index.html
 `
+
+
 
 
 
