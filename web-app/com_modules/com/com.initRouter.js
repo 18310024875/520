@@ -1,14 +1,15 @@
 export default function( Com ){
 
-	function handleRoutesAddKey(routes , parentK){
+	function mapRoutesAddKey( routes , parentK ){
 		routes.map( function(item){
-
+			// 给组件配置标识指向自身 ;
 			item.option.ROUTE = item ;
-
+			// 唯一标识;
 			item.key=parentK+'/'+item.path ;
+			// 递归;
 			!item.children ? item.children=[] : null ;
-			handleRoutesAddKey( item.children , item.key )
-		})		
+			mapRoutesAddKey( item.children , item.key )
+		})	
 	}
 
 	function hash_getQuery( h ){
@@ -52,80 +53,21 @@ export default function( Com ){
 		}
 	}
 
-	// 记录存在routerview元素容器
-	var ROUTER_VIEW_KEY_BOX={}; 
-
-	// router-view组件 ;
-	Com.globalComponent('router-view',{
-		render:function() {
-			var $_THIS = this;
-			var $_VFORLOOP = this.vforLoop.bind(this);
-			return {
-				tagName: "append",
-				data_static: {},
-				data_v: {},
-				children: []
-			};
-		},
-		// 挂载实例之前 , 动态替换组件 ;
-		beforeMount:function(){
-			if( this.$parent.ROUTE ){
-
-				this.addInKeyContent();
-
-				this.getNextAppend();
-			}
-		},
-		destroyed:function(){
-			if( this.$parent.ROUTE ){
-
-				this.delFromKeyContent();
-			}
-		},
-
-		methods:{
-			addInKeyContent(){
-				var PR = this.$parent.ROUTE ;
-				ROUTER_VIEW_KEY_BOX[ PR.key ]=this ;
-			},
-			delFromKeyContent(){
-				var PR = this.$parent.ROUTE ;
-				delete ROUTER_VIEW_KEY_BOX[ PR.key ];
-			},
-			getNextAppend(){
-				delete this.$components['append'];
-
-				var PR = this.$parent.ROUTE ;
-				var parse = hash_parse( location.href );
-				var p_arr = PR.key.split('/').filter(function(v){return v});
-				var nextName = parse.pathArr[ p_arr.length ];
-				for(var i=0;i<PR.children.length;i++){
-					var child = PR.children[i];
-					if( child.path==nextName ){
-						this.$components['append']=child['option'];
-						break;
-					}
-				}
-			},
-			// 下级路由改变 重新挂载自己 ;
-			rednerAgain(){
-				this.$destroy();
-
-				this.$mount( this.$el );
-			}
-		}
-	});
-
-
 	// 路由实例 ;
-	var r = Com.router = function( routes , dftUrl ){
+	var r = Com.router = function( routerOpt , $rcomponent ){
 		var this_ = this ;
+		var routes = routerOpt.routes ;
+		var defaultUrl = routerOpt.defaultUrl ;
+		this.listener = routerOpt.listener || function(){} ;
+		this.routerOpt = routerOpt;
 
-		// 生成对应key ;
-		handleRoutesAddKey( routes,'' );
+		// 路由根router-view 添加key ;
+		$rcomponent ? $rcomponent.$opt.ROUTE={ key:'/',children:routes } : null ;
+		// routes添加key ;
+		mapRoutesAddKey( routes , '' , $rcomponent );
 
-		// 默认地址 ;
-		dftUrl && this.setDefaultUrl( dftUrl ) ;
+		// 设置默认地址 ;
+		defaultUrl && this.setDefaultUrl( defaultUrl ) ;
 
 		// 路由地址
 		this.history=[ location.href ];
@@ -155,12 +97,7 @@ export default function( Com ){
 		// 监听变化
 		this.listen();
 	};
-	// 含有监听query变化的组件 ;
-	r.LISTEN_QUERY_CHANGE_BOX={};
-	// push ;
-	r.prototype.push=function( str ){
-		location.hash=str ;
-	}
+
 	// 设置默认地址 ;
 	r.prototype.setDefaultUrl=function( dftUrl ){
 		var h = location.hash ;
@@ -195,45 +132,113 @@ export default function( Com ){
 					}
 				};
 				var beginKey = '/'+same.join('/');
-				ROUTER_VIEW_KEY_BOX[ beginKey ].rednerAgain();
+				ROUTER_VIEW_KEY_BOX[ beginKey ] ? ROUTER_VIEW_KEY_BOX[ beginKey ].rednerAgain() : null ;
 			}
-			// query改变
-			if( new_parse.queryString != old_parse.queryString ){
-				var $obj = {};
-				var $nq = new_parse.query ;
-				var $oq = old_parse.query ;
+			
+			// // query改变
+			// if( new_parse.queryString != old_parse.queryString ){
+			// 	var $obj = {};
+			// 	var $nq = new_parse.query ;
+			// 	var $oq = old_parse.query ;
 
-				var $n_keys = Object.keys( $nq );
-				var $o_keys = Object.keys( $oq );
-				var $same = [] ;
-				$n_keys.map(function( key ){
-					$o_keys.indexOf(key)>-1 ? $same.push(key) : null ;
-				})
-				// 被删掉的
-				$o_keys.map(function( key ){
-					$same.indexOf(key)>-1 ? null : $obj[key]=null ;
-				})
-				// 增加的
-				$n_keys.map(function( key ){
-					$same.indexOf(key)>-1 ? null : $obj[key]=$nq[key] ;
-				})
-				// 改变的
-				$same.map(function( key ){
-					$nq[key]!=$oq[key] ? $obj[key]=$nq[key] : null ;
-				})
+			// 	var $n_keys = Object.keys( $nq );
+			// 	var $o_keys = Object.keys( $oq );
+			// 	var $same = [] ;
+			// 	$n_keys.map(function( key ){
+			// 		$o_keys.indexOf(key)>-1 ? $same.push(key) : null ;
+			// 	})
+			// 	// 被删掉的
+			// 	$o_keys.map(function( key ){
+			// 		$same.indexOf(key)>-1 ? null : $obj[key]=null ;
+			// 	})
+			// 	// 增加的
+			// 	$n_keys.map(function( key ){
+			// 		$same.indexOf(key)>-1 ? null : $obj[key]=$nq[key] ;
+			// 	})
+			// 	// 改变的
+			// 	$same.map(function( key ){
+			// 		$nq[key]!=$oq[key] ? $obj[key]=$nq[key] : null ;
+			// 	})
+			// };
 
-				// ROUTER_VIEW_KEY_BOX所有组件存在订阅的触发 ;
-				for(var k in r.LISTEN_QUERY_CHANGE_BOX){
-					var c =  r.LISTEN_QUERY_CHANGE_BOX[k];
-						c.queryChange && c.queryChange( $obj ) ;
-				}
-			};
-
+			// 函数
+			this_.routerOpt.onchange ? this_.routerOpt.onchange(new_parse,old_parse) : null ;
 			// 记录历史 ;
 			this_.history.push( new_url );
 		}
 	}
 
-	
-}
 
+
+
+// *********************************************************************************************************
+
+// 记录存在routerview元素容器
+var ROUTER_VIEW_KEY_BOX=window.rr = {}; 
+
+// router-view组件 ;
+Com.globalComponent('router-view',{
+	// render
+	render:function() {
+		var $_THIS = this;
+		var $_VFORLOOP = this.vforLoop.bind(this);
+		return {
+			tagName: "routeChildAppendHere",
+			data_static: {},
+			data_v: {},
+			children: []
+		};
+	},
+	// 挂载实例之前 , 动态替换组件 ;
+	created:function(){
+		if( this.$parent.$opt.ROUTE ){
+
+			this.addInKeyContent();
+
+			this.getNextAppend();
+		}
+	},
+	destroyed:function(){
+		if( this.$parent.$opt.ROUTE ){
+
+			this.delFromKeyContent();
+		}
+	},
+
+	methods:{
+		addInKeyContent(){
+			var PR = this.$parent.$opt.ROUTE ;
+			ROUTER_VIEW_KEY_BOX[ PR.key ]=this ;
+		},
+		delFromKeyContent(){
+			var PR = this.$parent.$opt.ROUTE ;
+			delete ROUTER_VIEW_KEY_BOX[ PR.key ];
+		},
+		getNextAppend(){
+			delete this.$components['routeChildAppendHere'];
+			var PR = this.$parent.$opt.ROUTE ;
+			var parse = hash_parse( location.href );
+			var p_arr = PR.key.split('/').filter(function(v){return v});
+			var nextName = parse.pathArr[ p_arr.length ];
+			for(var i=0;i<PR.children.length;i++){
+				var child = PR.children[i];
+				if( child.path==nextName ){
+					this.$components['routeChildAppendHere']=child['option'];
+					break;
+				}
+			}
+		},
+		// 下级路由改变 重新挂载自己 ;
+		rednerAgain(){
+			try{
+				this.$destroy();
+
+				this.$mount( this.$el );
+			}catch(e){};
+		}
+		
+	}
+});
+
+
+}

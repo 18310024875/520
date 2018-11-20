@@ -12,25 +12,50 @@ export default function( Com ){
 
 
 	// component ;
-	var c = Com.component = function(  opt , $props , $parent ){
+	var c = Com.component = function(  
+			opt , 		// ---> 配置信息
+			$props , 	// ---> props
+			$parent ,   // ---> 父级节点
+			$root   ,   // ---> 根节点
+			$router ,   // ---> 跟路由实例 
+		){
+
 		var this_ = this ;
 
-		// 唯一id ;
-		this.id = $.onlyId();
+		// 配置 ;
+		this.$opt = opt ;
+		// props;
+		this.$props = $props || {};
+		// parent;
+		this.$parent = $parent || null;
+		// root
+		this.$root = $root || this ;
+		// router
+		opt.router ? $router=new Com.router(opt.router, this) : null ; // ( 根路由挂载的router在options内 )
+		this.$router = $router || null ;
 
-		// 处理了路由 ;
-		if( opt.queryChange ){
-			this.queryChange=opt.queryChange ;
-			Com.router.LISTEN_QUERY_CHANGE_BOX[ this.id ] = this ;
-		}
-		if( opt.routes ){
-			c.prototype.$router = new Com.router( opt.routes , opt.defaultUrl );
-
-			this.ROUTE = { key:'/',children:opt.routes };
-		}else if( opt.ROUTE ){
-			this.ROUTE = opt.ROUTE ;
-		}
-
+			// 唯一id ;
+			this.$id = $.onlyId();
+			// 装refs树的盒子
+			this.$refs = {} ;
+			// data 绑定this ;
+			this.$data = ($.type( opt.data )=='function'? opt.data() : JSON.parse(JSON.stringify(opt.data)))||{};
+			// 事件 绑定this ;
+			this.$methods = opt.methods||{} ;
+			// 组件 绑定this;
+			this.$components = opt.components || {};
+			// 全局组件添加到$components ;
+			for(var name in Com.globalComponents ){
+				this.$components[name] = Com.globalComponents[name];
+			}
+			// render 函数绑定 this ;
+			this.render = opt.render ;
+			// 生命周期 ;
+			this.created = opt.created || function(){}; //---可修改组件内部属性 ;
+			this.mounted = opt.mounted || function(){};
+			this.shouldUpdate = opt.shouldUpdate || function(){}; //---是否需要被动更新组件 ;
+			this.updated = opt.updated || function(){};
+			this.destroyed = opt.destroyed || function(){};
 
 		// 访问diff 直接调用$update() ;
 		Object.defineProperty( this , '$diff' , {
@@ -38,15 +63,6 @@ export default function( Com ){
 				this.$update();
 			}
 		})
-
-		// 配置 ;
-		this.$opt = opt ;
-
-		// 父组件
-		this.$parent = $parent ;
-
-		// props 绑定props ;
-		this.$props = $props || {};
 
 		// $props 映射this ;
 		for(var pName in this.$props){
@@ -62,9 +78,6 @@ export default function( Com ){
 			}(pName));
 		}
 
-		// data 绑定this ;
-		this.$data = ($.type( opt.data )=='function'? opt.data() : JSON.parse(JSON.stringify(opt.data)))||{};
-
 		// $data 映射this ;
 		for(var dName in this.$data){
 			(function(each){
@@ -79,9 +92,6 @@ export default function( Com ){
 			}(dName));
 		}
 
-	 	// 事件 绑定this ;
-	 	this.$methods = opt.methods||{} ;
-
 	 	// 事件 映射this .
  		for(var mName in this.$methods){
  			(function(each){
@@ -92,32 +102,6 @@ export default function( Com ){
  				})
  			}(mName))
  		};
-
-	 	// 组件 绑定this;
-	 	this.$components = opt.components || {};
-	 	// 全局组件添加到$components ;
-	 	for(var name in Com.globalComponents ){
-	 		this.$components[name] = Com.globalComponents[name];
-	 	}
-
-
-	 	// 生命周期 ;
-	 	this.created = opt.created || function(){};
-	 	  this.beforeMount = opt.beforeMount || function(){};
-	 	this.mounted = opt.mounted || function(){};
-	 	  this.beforeUpdate = opt.beforeUpdate || function(){};
-	 	this.updated = opt.updated || function(){};
-	 	this.destroyed = opt.destroyed || function(){};
-
-
-	 	// 装refs树的盒子
-	 	this.$refs = {} ;
-
-		// render 函数绑定 this ;
-		this.render = opt.render ;
-
-		// created 生命周期 ;
-		this.created();
 	};
 
 	// render解析成树 --- 解析vfor循环 ;
@@ -196,7 +180,6 @@ export default function( Com ){
 			// 动态 
 			if( D['vbind_double'] ){
 				var text = D['vbind_double']['value'];
-				typeof text=='object' ? text=JSON.stringify(text) : null ;
 				$_dom = $T.DOM = document.createTextNode( text );
 			}
 		}else{ //dom节点
@@ -239,8 +222,9 @@ export default function( Com ){
 
 			// 存在子组件挂载 ;
 			if( COMPONENT_OPTIONS ){
+				debugger
 				// 创建子组件 
-				$T['CHILD_COMPONENT'] = new Com( COMPONENT_OPTIONS , COMPONENT_PROPS , this );
+				$T['CHILD_COMPONENT'] = new Com( COMPONENT_OPTIONS , COMPONENT_PROPS , this , this.$root , this.$router );
 				// 挂载
 				$T['CHILD_COMPONENT'].$mount( $_dom );
 				// 判断ref
@@ -359,20 +343,19 @@ export default function( Com ){
 			if(new_D['vbind_double'] ){
 				if( new_D['vbind_double']['value'] !== old_D['vbind_double']['value'] ){
 					var text = new_D['vbind_double']['value'];
-					typeof text=='object' ? text=JSON.stringify(text) : null ;
-
 					$_dom.textContent = text ;
 				}
 			}
 		}else{
-			// 可能存在的子组件 ;
-			var CHILD_COMPONENT=$old_T['CHILD_COMPONENT'] ;
+			// 是否存在子组件 ;
+			var CHILD_COMPONENT = $old_T['CHILD_COMPONENT'] ;
 			// 动态
 			new_D['vbind_class'] ? $.diffClass( $_dom , new_D['vbind_class'] , old_D['vbind_class'] ) : null ;
 			new_D['vbind_style'] ? $.diffStyle( $_dom , new_D['vbind_style'] , old_D['vbind_style'] ) : null ;
 			if(new_D['vbind_attr']){
+				// 子组件attr就是props ;
 				CHILD_COMPONENT ? null : $.diffAttr(  $_dom , new_D['vbind_attr']  , old_D['vbind_attr'] ) ;
-			}
+			};
 			// 事件绑定 ( 兼容v-for循环调换位置 );
 			if( new_D['von'] ){
 				for(var m in new_D['von']){
@@ -381,7 +364,7 @@ export default function( Com ){
 						$_dom[ method ]=new_D['von'][method] ;
 					}(m))
 				}
-			}
+			};
 			// 判断v-show ;
 			if( new_D['vshow'] ){
 				if( !!new_D['vshow']['value'] != !!old_D['vshow']['value'] ){
@@ -392,24 +375,19 @@ export default function( Com ){
 						$_dom.classList.add('com_displayNone');
 					}
 				}
-			}
+			};
 
 			// 不同类型节点 ;
 			if( CHILD_COMPONENT ){ //components替换节点
 				// 赋值CHILD_COMPONENT ;
 				$new_T['CHILD_COMPONENT'] = CHILD_COMPONENT ;
-				// 是否需要$diff子组件 ;
-				if( new_D['vbind_attr'] ){
-					var needUpdate=false ;
-					for(var k in new_D['vbind_attr']){
-						if( new_D['vbind_attr'][k]!=old_D['vbind_attr'][k] ){
-							needUpdate=true ;
-							CHILD_COMPONENT[ k ]=new_D['vbind_attr'][k] ;
-						}
-					}
-					// 子组件update ;
-					needUpdate&&CHILD_COMPONENT.$update() ;
+				// 更新子组件的props ;
+				var vbind_attr = new_D['vbind_attr']||{} ;
+				for(var k in vbind_attr){
+					CHILD_COMPONENT[ k ]=vbind_attr[k] ;
 				}
+				// 只要存在子组件 , 就继续渲染 ;
+				CHILD_COMPONENT.$update() ;
 			}else if( tagName=='VFOR_BEGIN' ){ //v-for包裹节点 
 				//对比数组变化
 				var new_children = $new_T.children ;
@@ -472,12 +450,13 @@ export default function( Com ){
 
 		// 挂载
 	c.prototype.$mount=function( el ){
+		// created 生命周期 ;
+		this.created();
+		
 		// 获取el实例
-		this.$el = $.type(el)=='string' ? $.q(el) : el ; 
+		this.$el = $.type(el)=='string' ? $.q(el) : el ;
+		// 查看是否挂载 
 		if(!this.$el){ alert('找不到挂载节点'); return };
-
-		// beforeUpdate 生命周期
-		this.beforeMount() ;
 
 		// 生成一课树 ;
 		this.$tree = this.render() ;
@@ -492,29 +471,30 @@ export default function( Com ){
 	};
 	// 手动更新( 手动调用会引起父组件$diff出错,属于被动调用 );
 	c.prototype.$update=function(){
-		if(!this.$el){ alert('组件尚未挂载'); return };
+		if( this.shouldUpdate && this.shouldUpdate()==false ){
+			// 性能优化 ;
+			return ;
+		} else{
+			// 查看是否挂载
+			if(!this.$el){ alert('组件尚未挂载'); return };
 
-		// beforeUpdate 生命周期
-		this.beforeUpdate() ;
-
-		// 新树和旧树 ;
-		var new_tree = this.render();
-		var old_tree = this.$tree ; 
-
-		// 对比树
-		this.diffTree( new_tree , {isComponentEl:true,DOM:this.$el} , old_tree );
-
-		// 对比完替成新的树 ;
-		this.$tree = new_tree ;
-
-		// updated 生命周期
-		this.updated();
+			// 新树和旧树 ;
+			var new_tree = this.render();
+			var old_tree = this.$tree ; 
+	
+			// 对比树
+			this.diffTree( new_tree , {isComponentEl:true,DOM:this.$el} , old_tree );
+	
+			// 对比完替成新的树 ;
+			this.$tree = new_tree ;
+	
+			// updated 生命周期
+			this.updated();
+		}
 	};
 	// 销毁
 	c.prototype.$destroy=function(){
 		if(!this.$el){ alert('组件尚未挂载'); return };
-		// 移除监听query
-		this.queryChange ? delete Com.router.LISTEN_QUERY_CHANGE_BOX[ this.id ] : null ;
 
 		// 注销树
 		this.unsetTree( this.$tree , true );

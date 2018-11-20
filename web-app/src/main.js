@@ -1,69 +1,65 @@
-// config
-import config from 'src/config';
-// 公共样式
-import 'src/assets/css/public.less';
-// jq
-import $ from 'jquery';
-window.$ = $ ;
-// 工具
-import tool from 'src/tool';
-// socket 
-import socket from 'src/socket';
-// Com
 import Com from 'com';
-Com.component.prototype = {
-	...Com.component.prototype,
-	$io: socket ,
-	$tool: tool ,
-	$ui: tool.ui ,
-	$ajax( obj ){
-		obj.url = config['javaHost']+obj.url+ (obj.url.indexOf('?')==-1?'?':'&')+'token='+config['token'] ;
-	   !obj.type||obj.type.toLocaleLowerCase()=='get' ? obj.params=obj.data : null ;
-		this.ajax( obj );
+
+
+// 发布订阅
+var eventproxy = require('eventproxy');
+var $evtbus = new eventproxy();
+	$evtbus.off = $evtbus.removeListener ;
+
+	Com.component.prototype.$evtbus = $evtbus ;
+
+var a = {
+	template:'<h1> {{this.list}}{{this.name}}</h1>',
+	mounted(){
+		console.log(1,this)
 	},
-	$ajax2( obj ){
-		obj.url = config['localHost']+obj.url ;
-	   !obj.type||obj.type.toLocaleLowerCase()=='get' ? obj.params=obj.data : null ;
-		this.ajax( obj );
+	shouldUpdate(){
+		return false
 	},
-	ajax( obj ){
-		return tool.ajax({ 
-			...obj,
-			success:(res)=>{
-				res=JSON.parse(res);
-				obj.success&&obj.success.call(this,res);
-			},
-			error:(e)=>{
-				obj.error&&obj.error.call(this,e)
-			}
-		});
+	updated(){
+		alert(9)
+	}
+};
+import router from './router.js';
+window.App= new Com({
+	router: router ,
+	components:{
+		a 
 	},
-}
+	data(){
+		return {
+			list: [1,2,3,{name:1,age:'xiaoaming'}],
+			name:'kkkk'
+		}
+	},
+	template: `<div >
+					<a :name="this.name" :list="this.list">
+						<h1>
+							h1h1h1
+							<h2>
+								h2h2h2
+								<h3> h3h3h </h3>
+							</h2>
+						</h1>
+					</a>
 
-// 全局组件
-import depTree from 'components/select-man/dep-tree'; Com.globalComponent('depTree',depTree);
-import gButton from 'components/common/g-button'; Com.globalComponent('gButton',gButton);
-import gAvatar from 'components/common/g-avatar'; Com.globalComponent('gAvatar',gAvatar);
-import gUpload from 'components/common/g-upload'; Com.globalComponent('gUpload',gUpload);
-
-// 全局选人组件 
-import selectMan from 'components/select-man/index.com';
-window.selectMan = new Com({ ...selectMan }).$mount('#app');
-
-
-// 全局选人组件 
-import imSelectMan from 'components/im-select-man/index.com';
-window.imSelectMan = new Com({ ...imSelectMan }).$mount('#app');
-
-
-
-import project from 'components/project/project'; 
-import routes  from './routes';
-window.APP = new Com({
-	...project ,
-	routes ,
-	defaultUrl:'/projectType?projectFlagKey=masterJoin',
+					<h1 :kk="this.list" v-for="(v,k) in this.list" @click="this.click('1',2,v,k,k+'1')">
+						{{v}}
+					</h1>
+					<!--<router-view></router-view>-->
+				</div>`,
+	created(){
+		
+	},
+	mounted(){
+		console.log(this)
+	}
 }).$mount('#app');
+
+
+
+
+
 
 
 

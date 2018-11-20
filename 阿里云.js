@@ -58,6 +58,7 @@ mysql -h 39.105.201.170 -P 3306 -uroot -pqwer
 
 处理进程 --->
 	https://www.cnblogs.com/aipiaoborensheng/p/7676364.html
+
 	netstat -lntp  #查看监听(Listen)的端口
 	netstat -tulpn #查看所有运行中的服务的详细信息
 	ps -aux        #显示使用内存的进程

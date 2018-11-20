@@ -71,6 +71,7 @@ app.use(function(err, req, res, next) {
 	res.render('error',{str:err,host:err.host,url:err.url});
 });
 
+
 // 日志输出和打印 
 var logStream = fs.createWriteStream(`${src}/server.log`, {flags: 'a'});
 app.use(morgan('short', {stream: logStream})); //-- app.use(morgan('short')); 

@@ -1,7 +1,7 @@
-// var FORM_PROPS = ['id','src','href','title','value','readonly','disabled','checked','selected','autofocus','multiple','action']
+ // var FORM_PROPS = ['id','src','href','title','value','readonly','disabled','checked','selected','autofocus','multiple','action']
 var FORM_PROPS = ['readOnly','disabled','checked','selected','autofocus','multiple'];
 
-var id= Date.parse( new Date() );
+var id= 0;
 
 var $ = {
 	onlyId(){
@@ -36,7 +36,7 @@ var $ = {
 				if(k=="value"){
 					dom[k] = value ;
 				}else{
-					typeof value=='object' ? dom.setAttribute(k,JSON.stringify(value)) : dom.setAttribute(k,value);
+					dom.setAttribute(k,value);
 				}
 			}
 		}
@@ -69,7 +69,7 @@ var $ = {
 					if(k=="value"){
 						dom[k] = value ;
 					}else{
-						typeof value=='object' ? dom.setAttribute(k,JSON.stringify(value)) : dom.setAttribute(k,value);
+						dom.setAttribute(k,value)
 					}
 				}
 			}

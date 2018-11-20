@@ -34,7 +34,7 @@ function renderLess( opt ){
 }
 
 // 全局Com
-window.Com = function( opt , props , parentComponent){
+window.Com = function( opt , props , parent , root , router ){
 	// less
 	renderLess( opt );
 
@@ -48,7 +48,9 @@ window.Com = function( opt , props , parentComponent){
 	return new Com.component( 
 		opt ,   //配置项
 		props , //收到的props
-		parentComponent //父组件
+		parent , //父组件
+		root , //跟根节
+		router //路由节点
 	);
 };
 
