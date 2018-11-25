@@ -6,9 +6,9 @@ module.exports = (
 	    secret: "my-secret",
 	    resave: true,
 	    saveUninitialized: true,
-	    // socket中好像不好使 ;;; 
-	    cookie:{
-	    	maxAge:60000000000
-	    }
+	    // 默认过期0秒
+	    // cookie:{
+	    // 	maxAge:60000000000
+	    // }
 	})
 );

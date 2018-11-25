@@ -19,7 +19,7 @@ module.exports = function( IO ){
 			let s = this.socket ;
 			console.log('socket一个用户断开连接连接 id='+s.id );
 		},
-		
+
 	}
 
 
@@ -52,6 +52,8 @@ module.exports = function( IO ){
 			if(res.type=='1'){
 					socket.handshake.session.kkk='kkkk' ;
 					socket.handshake.session.save();
+			}else if(res.type=='11'){
+				console.log( IO.sockets.sockets )
 			}
 		})
 
