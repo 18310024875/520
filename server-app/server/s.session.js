@@ -5,6 +5,10 @@ module.exports = (
 	session({
 	    secret: "my-secret",
 	    resave: true,
-	    saveUninitialized: true
+	    saveUninitialized: true,
+	    // socket中好像不好使 ;;; 
+	    cookie:{
+	    	maxAge:60000000000
+	    }
 	})
 );

@@ -22,6 +22,7 @@ export default function( Com ){
 
 		var this_ = this ;
 
+
 		// 配置 ;
 		this.$opt = opt ;
 		// props;
@@ -39,7 +40,7 @@ export default function( Com ){
 			// 装refs树的盒子
 			this.$refs = {} ;
 			// data 绑定this ;
-			this.$data = ($.type( opt.data )=='function'? opt.data() : JSON.parse(JSON.stringify(opt.data)))||{};
+			this.$data = ($.type( opt.data )=='function'? opt.data() : JSON.parse(JSON.stringify( opt.data || {} ))) ;
 			// 事件 绑定this ;
 			this.$methods = opt.methods||{} ;
 			// 组件 绑定this;
@@ -48,14 +49,15 @@ export default function( Com ){
 			for(var name in Com.globalComponents ){
 				this.$components[name] = Com.globalComponents[name];
 			}
-			// render 函数绑定 this ;
-			this.render = opt.render ;
 			// 生命周期 ;
 			this.created = opt.created || function(){}; //---可修改组件内部属性 ;
 			this.mounted = opt.mounted || function(){};
 			this.shouldUpdate = opt.shouldUpdate || function(){}; //---是否需要被动更新组件 ;
 			this.updated = opt.updated || function(){};
 			this.destroyed = opt.destroyed || function(){};
+
+			// render 函数绑定 this ;
+			this.render = opt.render ;
 
 		// 访问diff 直接调用$update() ;
 		Object.defineProperty( this , '$diff' , {
@@ -186,9 +188,9 @@ export default function( Com ){
 			// 可能存在的子组件 ;
 			var COMPONENT_OPTIONS=this.$components[ tagName ] , COMPONENT_PROPS=null ;
 			if( COMPONENT_OPTIONS ){ //components替换节点
-				$_dom = $T.DOM = document.createElement('figure');
+				$_dom = $T.DOM = document.createElement('figure'); S['classList']?S['classList']+=' com_figure':S['classList']='com_figure';
 			}else if( tagName=='VFOR_BEGIN' ){ //v-for包裹节点 
-				$_dom = $T.DOM = document.createElement('article');
+				$_dom = $T.DOM = document.createElement('article'); S['classList']?S['classList']+=' com_vforwrap':S['classList']='com_vforwrap';
 			}else{ // 常规dom节点
 				$_dom = $T.DOM = document.createElement( tagName );
 			}
@@ -222,7 +224,6 @@ export default function( Com ){
 
 			// 存在子组件挂载 ;
 			if( COMPONENT_OPTIONS ){
-				debugger
 				// 创建子组件 
 				$T['CHILD_COMPONENT'] = new Com( COMPONENT_OPTIONS , COMPONENT_PROPS , this , this.$root , this.$router );
 				// 挂载
@@ -450,6 +451,8 @@ export default function( Com ){
 
 		// 挂载
 	c.prototype.$mount=function( el ){
+		var this_ = this ;
+
 		// created 生命周期 ;
 		this.created();
 		
@@ -465,12 +468,16 @@ export default function( Com ){
 		this.readTree( this.$tree , {isComponentEl:true,DOM:this.$el} );
 
 		// mounted 生命周期
-		this.mounted();
+		setTimeout(function(){
+			this_.mounted();
+		},0);
 
 		return this ;
 	};
 	// 手动更新( 手动调用会引起父组件$diff出错,属于被动调用 );
 	c.prototype.$update=function(){
+		var this_ = this ;
+
 		if( this.shouldUpdate && this.shouldUpdate()==false ){
 			// 性能优化 ;
 			return ;
@@ -489,7 +496,9 @@ export default function( Com ){
 			this.$tree = new_tree ;
 	
 			// updated 生命周期
-			this.updated();
+			setTimeout(function(){
+				this_.updated();
+			},0);
 		}
 	};
 	// 销毁

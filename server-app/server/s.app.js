@@ -18,9 +18,8 @@ var src = path.join(__dirname,'..');
 
 // 全局 解决跨域
 app.all('*', function(req, res, next) {
-	// res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Origin",      "http://172.24.139.2:5555");
-    // res.setHeader("Access-Control-Allow-Origin",      "http://172.20.10.2:5555");
+	res.setHeader("Access-Control-Allow-Origin", "*");
+    // res.setHeader("Access-Control-Allow-Origin", "http://172.20.10.2:5555");
     
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers",     "X-Requested-With,Content-Type");

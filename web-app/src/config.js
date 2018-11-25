@@ -2,14 +2,11 @@
 const ConfigObj = {
 	'test':{
 		token:'',
-		javaHost : 'http://123.103.9.204:6058',
-		localHost: 'http://172.24.139.2:3000',
-		// localHost:'http://172.20.10.2:3000'
+		host:'http://172.20.10.2:3000'
 	},
 	'build':{
 		token:'',
-		javaHost : 'https://ezone.yonyoucloud.com',
-		localHost: 'http://172.24.139.2:3000',
+		host:'http://39.105.201.170:3000'
 	}
 }
 

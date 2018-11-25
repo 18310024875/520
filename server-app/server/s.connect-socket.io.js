@@ -8,7 +8,8 @@ const sharedsession = require("express-socket.io-session");
 var session = require('./s.session');
 
 
-
+// socket方法
+var Methods = require('../socket_methods') ;
 
 // 向全局IO对象上添加方法 ;
 function IoAddMethods( IO ){
@@ -55,39 +56,6 @@ function IoAddMethods( IO ){
 	return IO ;
 }
 
-// 已经链接 ;
-function ConnectionEd( IO ){
-
-	return function( socket ){
-
-		// socket.handshake.session.kkkkkkk = 'kkkkkkk';
-	 	// socket.handshake.session.save();
-		console.log('socket一个用户连接 id='+socket.id);
-
-
-		// 链接成功---向用户发送信息 ;
-		socket.emit('imMessage',{type:'connected',content: socket.id });
-
-
-		// 自定义接受事件 ;
-		socket.on('imMessage', function( data ){
-			console.log(socket.handshake.session);
-			console.log('socket一个用户'+socket.id+'发送信息'+data );
-		})
-
-
-		// 断开连接事件 ;
-		socket.on('disconnect', function(){
-			if( socket.uid ){
-				delete IO.$userList[ socket.uid ] ;
-			};
-
-			console.log('socket一个用户断开连接连接 id='+socket.id );
-		});
-
-	}
-}
-
 
 module.exports = function( httpServer ){
 
@@ -96,7 +64,7 @@ module.exports = function( httpServer ){
 	IO = IoAddMethods( IO );
 	
 	IO.use( sharedsession( session ) );
-	IO.on('connection', ConnectionEd(IO) );
+	IO.on('connection', Methods(IO) );
 
 	return IO ;
 }

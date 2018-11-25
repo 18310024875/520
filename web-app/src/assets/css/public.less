@@ -1,6 +1,5 @@
-@import './reset.less';
-@import './font/style.css';
-@import './font2/style.css';
+// @import './reset.less';
+// @import './ui.less';
 
 *{
 	box-sizing:border-box;
@@ -16,52 +15,61 @@ body {
     background-color: #f1f1f1;
 }
 
-html,body,#app,.vrouter_wrap,.vcomponent_wrap{
+html,body,
+body #appWrapper,
+body .com_figure,
+body .com_vforwrap{
 	position:relative;
 	height:100%;
+	margin:0;padding:0;
+}
+body .ui-dialog{
+    margin-left: unset!important;
+    margin-top: unset !important;
 }
 
-.img-wrap{
-    background: url('~assets/images/wait.gif') no-repeat 50% 50%;
-    background-size: 25px 25px;
-}
-.g-ui-yes,.g-ui-no,.g-ui-yes,.g-ui-say{
-	display: none;
-	padding: 0 35px;
-    height: 38px;
-    line-height: 38px;
-	text-align: center;
-	font-size: 14px;
-	position: fixed;
-	z-index: 100;
-	background: white;
-	top: 30%;left: 50%;
-	transform: translateX(-50%);
-	border-radius: 5px;
-	box-shadow: rgba(0,0,0,0.13) 0 4px 10px;
-	color: #666;
-	.icon{
-		font-size: 15px;
-	}
-}
-.g-ui-yes .ic{
-	color: #31d99c;
-	margin-right: 5px;
-}
-.g-ui-no .ic{
-	color: #FFDE00;
-	font-size: 16px;
-	margin-right: 5px;
-}
 
-.cp{
-	cursor: pointer;
-}
-.elli{
-	overflow: hidden;
-	text-overflow:ellipsis;
-	white-space: nowrap;
-}
+// .img-wrap{
+//     background: url('~assets/images/wait.gif') no-repeat 50% 50%;
+//     background-size: 25px 25px;
+// }
+// .g-ui-yes,.g-ui-no,.g-ui-yes,.g-ui-say{
+// 	display: none;
+// 	padding: 0 35px;
+//     height: 38px;
+//     line-height: 38px;
+// 	text-align: center;
+// 	font-size: 14px;
+// 	position: fixed;
+// 	z-index: 100;
+// 	background: white;
+// 	top: 30%;left: 50%;
+// 	transform: translateX(-50%);
+// 	border-radius: 5px;
+// 	box-shadow: rgba(0,0,0,0.13) 0 4px 10px;
+// 	color: #666;
+// 	.icon{
+// 		font-size: 15px;
+// 	}
+// }
+// .g-ui-yes .ic{
+// 	color: #31d99c;
+// 	margin-right: 5px;
+// }
+// .g-ui-no .ic{
+// 	color: #FFDE00;
+// 	font-size: 16px;
+// 	margin-right: 5px;
+// }
+
+// .cp{
+// 	cursor: pointer;
+// }
+// .elli{
+// 	overflow: hidden;
+// 	text-overflow:ellipsis;
+// 	white-space: nowrap;
+// }
 
 .rot_animate{
 	transform-origin: 50% 50%;

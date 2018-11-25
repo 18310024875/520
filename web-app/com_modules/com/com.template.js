@@ -57,6 +57,7 @@ function decode_bd(s){
     if(s.length == 0) return "";
     s = s.replace(/&lt;/g,"<");
     s = s.replace(/&gt;/g,">");
+    
     return s; 
 };
 
@@ -79,7 +80,7 @@ var t = {};
 
 		var render = t.make_render( tree );
 
-		console.log(render)
+		console.log(render);
 
 		return render ;
 	};
@@ -300,9 +301,9 @@ var t = {};
 		var attributs = null ;
 		if( tag.indexOf('static_text')>-1){
 			// 静态字符内可能存在 " 影响匹配 ;
-			attributs = tag.match(/[^\s]+="(.+)"+/g)||[] ; 
+			attributs = tag.match(/[^\s]+="(.*)"+/g)||[] ; 
 		}else{
-			attributs = tag.match(/[^\s]+="(.+?)"+/g)||[] ; 
+			attributs = tag.match(/[^\s]+="(.*?)"+/g)||[] ; 
 		};
 
 		// 便利一个标签的所有属性 ;

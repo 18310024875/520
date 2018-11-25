@@ -3,11 +3,11 @@ var timeStr = '构建时间为 ===>  '+time(new Date(),'YYYY-MM-DD HH:mm');
 console.log('$$$$$$$$$$$$$$$$$$$$$$   '+timeStr+'   $$$$$$$$$$$$$$$$$$$$$$');
 
 
+const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); 
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const path = require('path');
+
 
 const ENV = process.env.NODE_ENV ;
 const src = path.resolve(__dirname,'..','src');
@@ -55,28 +55,22 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                      fallback: 'style-loader',
-                      use: [{loader: 'css-loader', options: {minimize: false}},{loader: 'postcss-loader'}]
-                }),
+                use: [{loader: 'style-loader'},{loader: 'css-loader', options: {minimize: false}},{loader: 'postcss-loader'}],
                 exclude: /^node_modules$/,          
             },
             {
                 test: /\.less$/,
-                use: ExtractTextPlugin.extract({
-                      fallback: 'style-loader',
-                      use: [{loader: 'css-loader', options: {minimize: false}},{loader: 'postcss-loader'},{loader: 'less-loader'}]
-                }),
+                use: [{loader: 'style-loader'},{loader: 'css-loader', options: {minimize: false}},{loader: 'postcss-loader'},{loader: 'less-loader'}],
                 exclude: /^node_modules$/,
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                use: [{loader: 'url-loader',options: {limit: 204800,name: 'fonts/[name].[hash:7].[ext]'}}],//大于20k打包进fonts文件夹
+                use: [{loader: 'url-loader',options: {limit: 20480000,name: 'fonts/[name].[hash:7].[ext]'}}],//大于20k打包进fonts文件夹
                 exclude: /^node_modules$/,
             },
             {
                 test: /\.(png|jpg|gif)$/,
-                use: [{loader: 'url-loader',options: {limit: 204800,name: 'img/[name].[hash:7].[ext]'}}],//大于20k打包进img文件夹
+                use: [{loader: 'url-loader',options: {limit: 20480,name: 'img/[name].[hash:7].[ext]'}}],//大于20k打包进img文件夹
                 exclude: /^node_modules$/,
             }
         ]
@@ -91,9 +85,6 @@ module.exports = {
             "timeStr":JSON.stringify(timeStr) ,
             "ENV": JSON.stringify(ENV)
         }),
-        new ExtractTextPlugin({
-            filename: 'style-[hash:7].css'
-        }),
         new HtmlWebpackPlugin({
             hash: true,
             title: "",
@@ -103,6 +94,9 @@ module.exports = {
         })
     ]
 }
+
+
+
 
 
 

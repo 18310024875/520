@@ -1,0 +1,12 @@
+.kkkk{
+    animation: aaa 0.5s 
+}
+
+@keyframes {
+    0{
+        width:100px;
+    }
+    100{
+        width:200px;
+    }
+}

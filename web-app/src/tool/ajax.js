@@ -1,11 +1,11 @@
-export default AJAX = ( options={} )=>{
+export default ( options={} )=>{
     var method      = options.type ? options.type.toUpperCase() : 'GET';
-    var params      = options.params || {};   // 拼接地址
+    var query      = options.query || {};   // 拼接地址
     var data        = options.data || {} ;    // formdata 数据
     var contentType = options.contentType ;
     var timeout     = options.timeout || 20000 ;
     var url         = options.url || '';
-    
+
     var beforeSend = options.beforeSend || function(){} ;
     var success    = options.success || function(){} ;
     var error      = options.error   || function(){} ;
@@ -15,13 +15,17 @@ export default AJAX = ( options={} )=>{
         XHR.withCredentials = true ;
         // 设置函数
         XHR.onreadystatechange = function() {
-            if( XHR.readyState == 4 && XHR.status == 200 ) { 
-                success( XHR.responseText );
+            if( XHR.readyState == 4 ){
+                if( XHR.status == 200 ){
+                    success( XHR.responseText );
+                }else{
+                    error( XHR.responseText );
+                }
             }
         };
         // **** ajax 失败一律不反错
         XHR.onerror=function(e){
-            console.error('XHR.onerror\n',e);
+            console.error('XHR.onerror');
             error();
         };
         XHR.onabort=function(){
@@ -32,27 +36,27 @@ export default AJAX = ( options={} )=>{
             console.error('XHR.ontimeout');
             error();
         };
-        
+
     // 转译
     var U = str=>encodeURIComponent(str) ;
 
-
     // params拼接到url上
-    var paramsArr=[];
-    for( let key in params ){
-        paramsArr.push(`${U(key)}=${U(params[key])}`)
+    var queryArr=[];
+    for( let key in query ){
+        queryArr.push(`${U(key)}=${U(query[key])}`)
     };
-    if( paramsArr.length ){
+    if( queryArr.length ){
         if( url.indexOf('?')==-1 ){
-            url=`${url}?${paramsArr.join('&')}`;
+            url=`${url}?${queryArr.join('&')}`;
         }else{
-            url=`${url}&${paramsArr.join('&')}`;
+            url=`${url}&${queryArr.join('&')}`;
         }
     };
 
+
     // 发送数据 ;
     if( method=='GET' ){
-        // open 
+        // open
         XHR.open( method , url, true);
         XHR.timeout = timeout ;
         // beforeSend
@@ -64,7 +68,7 @@ export default AJAX = ( options={} )=>{
             XHR.open( method , url, true);
             XHR.timeout = timeout ;
             // setRequestHeader
-            XHR.setRequestHeader("Content-Type", "application/json; charset=UTF-8"); 
+            XHR.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
             // beforeSend
             beforeSend(XHR);
             // send
@@ -75,7 +79,7 @@ export default AJAX = ( options={} )=>{
             XHR.open( method , url, true);
             XHR.timeout = timeout ;
             // setRequestHeader
-            XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"); 
+            XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             // beforeSend
             beforeSend(XHR);
             // data格式化
