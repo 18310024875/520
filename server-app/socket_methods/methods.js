@@ -10,7 +10,8 @@ module.exports = {
 	loginOk_session_add_userInfo( userInfo ){
 		let s = this.socket ;
 		let session = s.handshake.session ;
-		session['userInfo'] = JSON.stringify(userInfo) ;
+		s.handshake.session['userInfo'] = JSON.stringify(userInfo) ;
+		s.handshake.session.save();
 
 		console.log( this.socket.handshake.session )
 	},
