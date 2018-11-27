@@ -7,20 +7,27 @@ function getTime(){
 
 module.exports = {
 	// 登录成功 向session中注入用户信息 ;
-	loginOk_session_add_userInfo( userInfo ){
+	loginOk_session_add_uid( uid ){
 		let s = this.socket ;
 		let session = s.handshake.session ;
-		session['userInfo'] = JSON.stringify( userInfo );
+		session.uid = uid;
 		session.save();
+
+
+		console.log( session )
 	},
 	// 是否登录
 	isLogin(opt){
+		var $query = G.MYSQL.$query ;
 		let s = this.socket ;
 		let session = s.handshake.session ;
 
-		console.log( 'isLogin-----' , session );
-		if( session['userInfo'] ){
-			this.snedImAjaxRes(opt,1, session['userInfo'] )
+		console.log( 'islogin---->' , session )
+
+		if( session.uid!=undefined ){
+			$query(`SELECT * FROM user WHERE uid="${session.uid}"`,res=>{
+				this.snedImAjaxRes(opt,1, res)
+			})
 		}else{
 			this.snedImAjaxRes(opt,1, false )
 		}
@@ -36,7 +43,7 @@ module.exports = {
 
 		if(account&&password){
 			$query(`SELECT * FROM user WHERE account="${account}" AND password="${password}"`,res=>{
-				res[0] ? this.loginOk_session_add_userInfo(res[0]) : null ;
+				res[0] ? this.loginOk_session_add_uid( res[0].uid ) : null ;
 				this.snedImAjaxRes(opt,1,res)
 			})
 		}else{
@@ -64,7 +71,7 @@ module.exports = {
 					VALUES("${cname}","${ctime}","${account}","${password}")`,res=>{
 						if(res){
 							$query(`SELECT * FROM user WHERE cname="${cname}"`,res=>{
-								res[0] ? this.loginOk_session_add_userInfo(res[0]) : null ;
+								res[0] ? this.loginOk_session_add_uid( res[0].uid ) : null ;
 								this.snedImAjaxRes(opt,1, res ) ;
 							})
 						}else{
