@@ -10,7 +10,7 @@ module.exports = {
 	loginOk_session_add_userInfo( userInfo ){
 		let s = this.socket ;
 		let session = s.handshake.session ;
-		session['userInfo'] = userInfo ;
+		session['userInfo'] = JSON.stringify( userInfo );
 		session.save();
 	},
 	// 是否登录
