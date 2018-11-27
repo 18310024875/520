@@ -55,11 +55,6 @@ module.exports = function( IO ){
 
 	// 闭包
 	return function( socket ){
-		console.log(' ');console.log(' ');
-		console.log(' ');console.log(' ');
-		// socket.handshake.session.kkkkkkk = 'kkkkkkk';
-	 	// socket.handshake.session.save();
-
 	 	// 0 创建方法实例 ;
 	 	var M = new Methods( socket );
 
@@ -68,7 +63,7 @@ module.exports = function( IO ){
 
 		// 2 接受用户传来的事件 ;
 		socket.on('imMessage', function( res={} ){
-			console.log('---------> ' , res )
+			console.log('imMessage---------> ' , res )
 			switch( res.type ) {
 				case 'imAjax':
 					M.imAjax( res.content )
