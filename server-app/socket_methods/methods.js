@@ -11,7 +11,7 @@ module.exports = {
 		let s = this.socket ;
 		let session = s.handshake.session ;
 		session.uid = uid;
-		session.save();
+		// session.save();
 
 
 		console.log( session )
