@@ -7,8 +7,8 @@ module.exports = (
 	    resave: true,
 	    saveUninitialized: true,
 	    // 默认过期0秒
-	    // cookie:{
-	    // 	maxAge:60000000000
-	    // }
+	    cookie:{
+	    	maxAge:86400000
+	    }
 	})
 );
