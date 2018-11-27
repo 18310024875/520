@@ -7,7 +7,6 @@ const sharedsession = require("express-socket.io-session");
 // 公用session 
 var session = require('./s.session');
 
-
 // socket方法
 var Methods = require('../socket_methods') ;
 
@@ -61,10 +60,10 @@ module.exports = function( httpServer ){
 
 	var IO = socketIo( httpServer );
 
-	IO = IoAddMethods( IO );
-	
-	IO.use( sharedsession( session ) );
-	IO.on('connection', Methods(IO) );
+		IO = IoAddMethods( IO );
+		
+		IO.use( sharedsession( session ) );
+		IO.on('connection', Methods(IO) );
 
 	return IO ;
 }

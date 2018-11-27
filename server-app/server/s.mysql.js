@@ -10,21 +10,16 @@ var Client = new mariasql({
 	db: 'chen'
 })
 
-
-Client.query(`SELECT * FROM user` , (err,res)=>{
-	console.log(err,res)
-})
-
 // 添加方法 ;
 Client.$query=function( sql , yes , no ){
-	// console.log('sql语句--- '+sql);
+	console.log('sql语句--- '+sql);
 
-	TargetMysql.query( sql , function(error , res , f){
+	Client.query( sql , function(error , res , f){
 		if(error){
 			console.log('mysql,error---'+error);
 			no ? no(error) : null ;
 		}else{
-			let _res = res instanceof Array ? res : res.affectedRows ;
+			let _res = res instanceof Array ? res : res.info.affectedRows ;
 			yes ? yes(_res) : null ;
 		}
 	});

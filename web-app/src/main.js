@@ -21,6 +21,13 @@ Com.component.prototype.$ajax = $tool.ajax ;
 import $ from 'jquery';
 window.$ = $ ;
 
+$('body').on('click','.mui-btn',(e)=>{
+	e.target.style.pointerEvents='none';
+	setTimeout(()=>{
+		e.target.style.pointerEvents='unset';
+	},1000)
+})
+
 window.App = new Com({
 	...root,
 	router,

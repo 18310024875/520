@@ -27,7 +27,7 @@ router.post('/login', (req, res, next)=>{
 	let password = b.password ;
 	if( account&&password){
 		// 查找login信息 ;
-		G.QUERY(`SELECT * FROM login WHERE account="${account}" AND password="${password}"`, data=>{
+		G.QUERY(`SELECT * FROM user WHERE account="${account}" AND password="${password}"`, data=>{
 			if( data[0] ){
 				// 记录在session中
 				req.session['uid'] = data[0]['uid'];
