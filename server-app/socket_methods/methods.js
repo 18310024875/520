@@ -11,7 +11,7 @@ module.exports = {
 		let s = this.socket ;
 		let session = s.handshake.session ;
 		s.handshake.session['userInfo'] = JSON.stringify(userInfo) ;
-		s.handshake.session.save();
+		// s.handshake.session.save();
 
 		console.log( this.socket.handshake.session )
 	},
