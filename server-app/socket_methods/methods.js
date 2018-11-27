@@ -8,11 +8,11 @@ function getTime(){
 module.exports = {
 	// 登录成功 向session中注入用户信息 ;
 	loginOk_session_add_userInfo( userInfo ){
-console.log( userInfo )
-
 		let s = this.socket ;
 		let session = s.handshake.session ;
 		session['userInfo'] = userInfo ;
+
+		console.log( this.socket.handshake.session )
 	},
 	// 是否登录
 	isLogin(opt){
