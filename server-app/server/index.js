@@ -20,16 +20,16 @@ var io = connectIo( server );
 // 启动服务 ;
 server.listen(3000, function(){
   console.log('listening on *:3000');
-  console('1');
-  console('2');
-  console('3');
-  console('4');
-  console('5');
-  console('6');
-  console('7');
-  console('8');
-  console('9');
-  console('10');
+  console.log('1');
+  console.log('2');
+  console.log('3');
+  console.log('4');
+  console.log('5');
+  console.log('6');
+  console.log('7');
+  console.log('8');
+  console.log('9');
+  console.log('10');
 });
 
 // 定义全局变量 ;
