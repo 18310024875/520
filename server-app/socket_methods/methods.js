@@ -10,8 +10,8 @@ module.exports = {
 	loginOk_session_add_uid( uid ){
 		let s = this.socket ;
 		let session = s.handshake.session ;
-		session.uid = ''+uid;
-		// session.save();
+		session.uid = uid;
+		session.save();
 
 
 		console.log( session )
