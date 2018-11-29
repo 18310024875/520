@@ -1,6 +1,6 @@
 <template>
-	<div class="messageList">
-		messageList
+	<div class="main-discoverList">
+		main-discoverList
 	</div>
 </template>
 <script type="text/javascript">
@@ -21,7 +21,7 @@
 	}
 </script>
 <style lang="less">
-	.messageList{
+	.main-discoverList{
 
 	}
 </style>

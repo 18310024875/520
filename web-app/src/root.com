@@ -1,20 +1,19 @@
 <template>
 	
 	<div id="app">
-		
-		<router-view v-if="this.userInfo"></router-view>
-
 		<!-- 登录页面 -->
-		<login v-if="!this.userInfo" :loginOk="this.loginOk.bind(this)"></login>
+		<login class="1-login" v-if="!this.userInfo" :loginOk="this.loginOk.bind(this)"></login>
 
 		<!-- 链接io浮层 -->
 		<div v-if="!this.socket_connect" class="connect-mask">
 			<div class="rot_animate mui-sppin mui-icon mui-icon-spinner mui-spin"></div>
 			<p>正在链接网络...</p>
 		</div>
+
+		<!-- 路由容器 -->
+		<router-view class="1-router-view" v-if="this.userInfo"></router-view>
+
 	</div>
-
-
 
 
 </template>
@@ -34,9 +33,16 @@
 
 		data(){
 			return {
+				// 初始化相关
 				socket:'',
 				socket_connect:'',
-				userInfo:''
+				userInfo:'',
+				// 聊天相关
+				roomList:[],
+				activeRoomInfo:{
+					roomId:'',
+					talkList:[]
+				}
 			}
 		},
 
@@ -82,6 +88,8 @@
 					w[ fn_error ]   = option.error  || function(){};
 					option['fn_success'] = fn_success ;
 					option['fn_error'] = fn_error ;
+					// 向服务器发送本地运行状态--->后台判断验证 ;
+					option['ENV']=ENV ;
 					// 发送给服务端 ;
 					this.socket.emit('imMessage', {
 						type:'imAjax',
@@ -104,22 +112,25 @@
 			},
 			// 判断是否已经登录
 			isLogin(){
+				alert(9)
 				this.imAjax({
 					next:true,
 					method:'isLogin',
-					success:(userInfo)=>{
-						console.log('isLogin', userInfo )
-						if( userInfo ){ this.userInfo=this.userInfo ; this.$diff }
+					success:(data)=>{
+						if( data&&data[0] ){ this.userInfo=data[0] ; this.$diff }
 					}
 				})
-			}
+			},
 		}
 	}
 </script>
 <style>
 	#app{
-		height: 100%;
-		position: relative;
+		position: absolute;
+		left: 0;right: 0;
+		top: 0;bottom: 0;
+		overflow: hidden;
+		background: white;
 		&>.connect-mask{
 			position: absolute;
 			left: 0;top: 0;

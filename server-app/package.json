@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "supervisor -w routes,server,socket_methods -i www ./server/index.js"
+    "start": "supervisor -w routes,lib,server,socket_methods -i www ./server/index.js"
   },
   "dependencies": {},
   "devDependencies": {

@@ -3,26 +3,44 @@
 
 *{
 	box-sizing:border-box;
+    padding:0;margin:0;
 }
-
-html{
-	overflow: auto;
+a {
+    text-decoration: none;
+}
+ol, ul , li{
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+input{
+    outline:none;
+    border: none;
+    background:none;     
 }
 
 body {
     color: #495060;
     word-break: break-all;
     background-color: #f1f1f1;
+    font-size:13px;
 }
 
-html,body,
-body #appWrapper,
-body .com_figure,
-body .com_vforwrap{
+html,body,#appWrapper{
 	position:relative;
 	height:100%;
 	margin:0;padding:0;
 }
+
+body .com_figure,body .com_vforwrap{
+    margin:0;padding:0;
+}
+    
 body .ui-dialog{
     margin-left: unset!important;
     margin-top: unset !important;

@@ -1,10 +1,14 @@
 
 const ConfigObj = {
-	'test':{
+	dev:{
 		token:'',
 		host:'localhost:3000'
 	},
-	'build':{
+	test:{
+		token:'',
+		host:'localhost:3000'
+	},
+	build:{
 		token:'',
 		host:'http://39.105.201.170:3000'
 	}

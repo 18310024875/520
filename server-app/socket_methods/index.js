@@ -56,8 +56,8 @@ module.exports = function( IO ){
 	// 闭包
 	return function( socket ){
 	 	// 0 创建方法实例 ;
-	 	var M = new Methods( socket );
-
+		 var M = new Methods( socket );
+		
 		// 1 链接成功  ;
 		M.connected();
 

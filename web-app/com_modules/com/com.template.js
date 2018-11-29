@@ -248,7 +248,8 @@ var t = {};
 					};
 
 					var vfor_tree = t.make_tree( each.vfor_tag_arr );
-					var match = vfor_tree.tag.match(/v-for="\s*\(\s*([\w-]+)\s*,\s*([\w-]+)\s*\)\s+in\s+([\w-\.\[\]']+)\s*"/) ;
+					var match = vfor_tree.tag.match(/v-for="\s*\(\s*([\w-]+)\s*,\s*([\w-]+)\s*\)\s+in\s+([^"]+)\s*"/) ;
+
 					T['vfor_tree'] = vfor_tree ;
 					T['vfor_val']  = match[1] ;
 					T['vfor_key']  = match[2] ;
@@ -289,6 +290,7 @@ var t = {};
 		var D = {
 		  	vbind_double:{},
 		  	vbind_class:{},
+		  	vbind_class_render:'',
 		  	vbind_style:{},
 		  	vbind_attr:{},
 
@@ -349,6 +351,8 @@ var t = {};
 									D['vbind_class'][ v_k[1] ] = v_k[2] ;
 								}
 							})
+					}else{
+						D['vbind_classList']=value.trim();
 					}
 				}else if( key=='style' ){
 					// 对象语法 切割
@@ -392,6 +396,7 @@ var t = {};
 
 		isEmptyObject(D.vbind_double) ? (delete D.vbind_double) : null ;
 		isEmptyObject(D.vbind_class) ? (delete D.vbind_class) : null ;
+		!D.vbind_classList ? (delete D.vbind_classList) : null ;
 		isEmptyObject(D.vbind_style) ? (delete D.vbind_style) : null ;
 		isEmptyObject(D.vbind_attr) ? (delete D.vbind_attr) : null ;
 

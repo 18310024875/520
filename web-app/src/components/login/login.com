@@ -1,5 +1,5 @@
 <template>
-	<div style="width: 100%;height: 100%;position: relative;">
+	<div style="position:absolute;left:0;right:0;top:0;bottom:0">
 
 		<!-- 登录页面 -->
 		<div id="login" v-if="this.status==0">

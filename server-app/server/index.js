@@ -39,3 +39,6 @@ global.G = {
 	SERVER:server ,
 	MYSQL:mysql
 };
+
+
+

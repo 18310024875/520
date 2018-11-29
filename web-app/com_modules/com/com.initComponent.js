@@ -202,6 +202,7 @@ export default function( Com ){
 
 			// 动态属性
 			D['vbind_class'] ? $.setClass($_dom , D['vbind_class']) : null ;
+			D['vbind_classList'] ? $_dom.className=D['vbind_classList'] : null ;
 			D['vbind_style'] ? $.setStyle($_dom , D['vbind_style']) : null ;
 			if(['vbind_attr']){
 				COMPONENT_OPTIONS ? COMPONENT_PROPS=D['vbind_attr'] : $.setAttr($_dom , D['vbind_attr']) ;
@@ -352,6 +353,7 @@ export default function( Com ){
 			var CHILD_COMPONENT = $old_T['CHILD_COMPONENT'] ;
 			// 动态
 			new_D['vbind_class'] ? $.diffClass( $_dom , new_D['vbind_class'] , old_D['vbind_class'] ) : null ;
+			new_D['vbind_classList']!=old_D['vbind_classList'] ? $_dom.className=new_D['vbind_classList'] : null ;
 			new_D['vbind_style'] ? $.diffStyle( $_dom , new_D['vbind_style'] , old_D['vbind_style'] ) : null ;
 			if(new_D['vbind_attr']){
 				// 子组件attr就是props ;

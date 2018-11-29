@@ -1,5 +1,5 @@
 <template>
-	<div class="mine">
+	<div class="main-mine">
 		mine
 	</div>
 </template>
@@ -21,7 +21,7 @@
 	}
 </script>
 <style lang="less">
-	.mine{
+	.main-mine{
 
 	}
 </style>

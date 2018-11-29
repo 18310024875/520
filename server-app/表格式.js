@@ -21,14 +21,16 @@
 // 房间信息
 | rooms | CREATE TABLE `rooms` (
   `room_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) DEFAULT '0',
   `room_name` varchar(30) DEFAULT NULL,
   `room_des` varchar(200) DEFAULT NULL,
   `creator_id` varchar(32) DEFAULT NULL,
-  `join_ids` text,
+  `join_ids` varchar(2000) ,
   `ctime` varchar(13) DEFAULT NULL,
   `utime` varchar(13) DEFAULT NULL,
   PRIMARY KEY (`room_id`),
   UNIQUE KEY `ctime` (`ctime`)
+  UNIQUE KEY `join_ids` (`join_ids`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 |
 
 

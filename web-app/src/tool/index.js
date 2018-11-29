@@ -1,5 +1,5 @@
 import ajax from './ajax';
-// import md5  from './md5' ;
+import md5  from './md5' ;
 import time from './format-time';
 import friendlyTime from './friendly-time';
 // import iscroll from './iscroll-listen';
@@ -12,7 +12,7 @@ import friendlyTime from './friendly-time';
 
 export default {
 	ajax,
-	// md5,
+	md5,
 	time,
 	friendlyTime,
 	// iscroll,
