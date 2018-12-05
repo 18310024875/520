@@ -12,14 +12,14 @@ var Client = new mariasql({
 
 // 添加方法 ;
 Client.$query=function( sql , yes , no ){
-	console.log('sql语句--- '+sql);
+	console.log('sql语句-------- '+sql);
 
 	Client.query( sql , function(error , res , f){
 		if(error){
 			console.log('mysql,error---'+error);
 			no ? no(error) : null ;
 		}else{
-			let _res = res instanceof Array ? res : res.info.affectedRows ;
+			let _res = res instanceof Array ? res : +res.info.affectedRows ;
 			yes ? yes(_res) : null ;
 		}
 	});

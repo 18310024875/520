@@ -38,7 +38,7 @@
 | talk  | CREATE TABLE `talk` (
   `talk_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `talk_content` text,
-  `talk_fids` varchar(2000) DEFAULT NULL,
+  `talk_fid` varchar(2000) DEFAULT NULL,
   `room_id` varchar(13) DEFAULT NULL,
   `creator_id` varchar(32) DEFAULT NULL,
   `ctime` varchar(13) DEFAULT NULL,
@@ -64,7 +64,8 @@
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 |
 
 
-delete from files ;
-delete from rooms ;
-delete from talk ;
-update user set join_rooms=NULL ;
+
+
+
+
+

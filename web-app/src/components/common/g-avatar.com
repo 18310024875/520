@@ -5,15 +5,20 @@
 			radius : this.radius 
 		}"
 		:style="{
-			width: this.size||'30px', 
-			height: this.size||'30px'
+			width: this.width ||'30px', 
+			height: this.height ||'30px'
 		}">
 		<!-- 图片头像 -->
-		<img 
-			class="g-avatar-img" 
+		<div 
+			class="g-avatar-img-div" 
 			v-if="!this.isError" 
-			:src="this.avatar"
-			@error="this.imgError"/>
+			ref="imgdiv"
+			:style="{
+				background: 'url('+this.avatar+') no-repeat' ,
+				backgroundSize: 'cover'
+			}"></div>
+		<img v-if="!this.isError" class="g-avatar-img" :src="this.avatar" @error="this.imgError"/>
+
 		<!-- 文字头像 -->
 		<div 
 			class="g-avatar-name"
@@ -38,10 +43,12 @@
 	/*
 		props -->
 			radius ,
-			size ,
+			width
+			height ,
 			fontSize ,
 			avatar ,
 			name
+			nameLength
 	*/
 
 	export default{
@@ -61,6 +68,17 @@
 				this.isError=true
 			}
 		},
+		mounted(){
+			this.__avatart = this.avatar ||false ;
+		},
+		updated(){
+			if( this.__avatart!= this.avatart ){
+				this.__avatart = this.avatar ;
+				try{
+					this.$refs.imgdiv.style.backgroundSize='cover';
+				}catch(e){}
+			}
+		},
 
 		methods:{
 			imgError(){
@@ -77,7 +95,8 @@
 			},
 			getName(){
 				let str = this.name || '' ;
-				return /[\u4e00-\u9fa5]/.test(str) ? str.substr(-2) : str.substr(0, 2);
+				let nl = this.nameLength || 2 ;
+				return /[\u4e00-\u9fa5]/.test(str) ? str.substr(-nl) : str.substr(0, nl);
 			},
 			getBgColor(){
 				let str = this.name || '' ;
@@ -90,18 +109,25 @@
 </script>
 <style>
 	.g-avatar{
-		.g-avatar-img{
+		position: relative;
+		.g-avatar-img-div{
+			position: absolute;
+			left: 0;top: 0;
+			right: 0;bottom: 0;
 			overflow: hidden;
-			display: block;
-			width: 100%;
-			height: 100%;
+		}
+		.g-avatar-img{
+			position: absolute;
+			left: 0;top: 0;
+			right: 0;bottom: 0;
+			overflow: hidden;
+			display: none;	
 		}
 		.g-avatar-name{
+			position: absolute;
+			left: 0;top: 0;
+			right: 0;bottom: 0;
 			overflow: hidden;
-			height: 100%;
-			width: 100%;
-			position: relative;
-			float: left;
 			.tran{
 				line-height: 1;
 				text-align: center;
@@ -109,7 +135,7 @@
 				width: 100%;
 				position: absolute;
 				top: 50%;
-				transform: translateY(-50%);
+				transform: translateY(-60%);
 			}
 		}
 	}

@@ -8,17 +8,26 @@
 			</div>
 		</header>
 		<div class="content">
-			<div class="content-list">
+			<div class="content-list" ref="scroll">
 				<ul class="sm">
-					
-					<itemOfTalk :data="{}"></itemOfTalk>
-					<itemOfTalk :data="{}" :s="1"></itemOfTalk>
-					<itemOfTalk :data="{}"></itemOfTalk>
 
+					<!-- 每条会话内容 -->
+					<itemOfTalk 
+						v-for="(talk,index) in this.talkList" 
+						:data="talk">	
+					</itemOfTalk>
+
+					<h1 style="height:8px"></h1>
 				</ul>
 			</div>
 			<div class="content-talk">
-				<talkBar style="height:100%;"></talkBar>
+
+				<talkBar 
+					style="height:100%;" 
+					:value="this.value"
+					:enter="this.sendMessageToRoom.bind(this)">
+				</talkBar>
+
 			</div>
 		</div>
 	</div>
@@ -36,11 +45,90 @@
 
 		data(){
 			return {
-
+				// 地址上的房间id
+				room_id:'',
+				// 谈话列表
+				talkList:[],
+				// 输入值
+				value:'1',
 			}
 		},
-		methods:{
+		
+		mounted(){
+			this.firstInIt();
 
+			this.$evtbus.off('messageRoom').on('messageRoom',(talk)=>{
+				try{
+					if( talk ){
+						this.talkList.push(talk);
+						this.$diff ;
+
+						let dom = this.$refs.scroll ;
+						let offsetHeight = dom.offsetHeight ;
+						let scrollTop = dom.scrollTop ;
+						let scrollHeight = dom.scrollHeight ;
+
+						console.log( '888888888888----->' , scrollHeight-(offsetHeight+scrollTop) );
+						if( scrollHeight-(offsetHeight+scrollTop)<200 ){
+							dom.scrollTop = 9999 ;
+						}else{
+
+						}
+					}
+				}catch(e){};
+			})
+		},
+
+		methods:{
+			// 第一次进入页面 ;
+			firstInIt(){
+				let room_id = this.$router.query.room_id ;
+				if( room_id ){
+					this.room_id = room_id ;
+					// 请求列表 ;
+					this.$root.getTalkListFromRoomId( this.room_id , '' , talkList=>{
+						this.talkList = talkList ; 
+						this.$diff ;
+
+						// 初始滚动最底层
+						let dom = this.$refs.scroll ;
+						dom.scrollTop = 9999 ;
+
+						this.init_scrollFn();
+					})
+				}
+			},
+			// 上拉加载 ;
+			init_scrollFn(){
+				let dom = this.$refs.scroll ;
+				dom.onscroll = (e)=>{
+					if( dom.scrollTop==0 ){
+						let last_id = (this.talkList[0]&&this.talkList[0].talk_id) || '' ;
+						// 请求列表 ;
+						this.$root.getTalkListFromRoomId(this.room_id , last_id , newTalkList=>{
+							if( newTalkList.length ){
+								let dom = this.$refs.scroll ;
+								let old_scrollHeight = dom.scrollHeight ;
+
+								this.talkList = newTalkList.concat( this.talkList );
+								this.$diff ;
+
+								// 上拉加载 更新数据后恢复滚动高度 ;
+								let new_scrollHeight = dom.scrollHeight ;
+								dom.scrollTop = new_scrollHeight - old_scrollHeight ;
+							}
+						})
+					} 
+				}
+			},
+			// 点击发送数据 ;
+			sendMessageToRoom(value){
+				this.value = value ;
+				this.$diff ;
+				if( this.value ){
+					this.$root.sendMessageToRoom( this.room_id , this.value , '' );
+				}
+			}
 		}
 	}
 </script>

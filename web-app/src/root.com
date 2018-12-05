@@ -19,10 +19,15 @@
 </template>
 <script type="text/javascript">
 
+	// window ;
 	const w = window ;
+
+	// 公用数据和方法 ;
+	import DATA_METHODS from './root-common-data-methods';
 
 	// 引入socket ;
 	import CONNECT_SOCKET from 'src/socket';
+
 	// 登录页面
 	import login from 'components/login/login';
 
@@ -33,16 +38,12 @@
 
 		data(){
 			return {
+				// 公用im数据 ;
+				...DATA_METHODS.data ,
 				// 初始化相关
 				socket:'',
 				socket_connect:'',
 				userInfo:'',
-				// 聊天相关
-				roomList:[],
-				activeRoomInfo:{
-					roomId:'',
-					talkList:[]
-				}
 			}
 		},
 
@@ -52,6 +53,8 @@
 		},
 
 		methods:{
+			// 公用im方法 ;
+			... DATA_METHODS.methods ,
 			// 链接socket
 			initSocket(){
 				this.socket = CONNECT_SOCKET();
@@ -71,14 +74,17 @@
 					switch( res.type ){
 						// imAjax
 						case 'imAjax':
-							this.getImAjaxRes( res.content )
+							this.GET_SOCKET_OK_imAjax( res.content )
 							break ;
-
+						// 向一个房间发送消息 ;
+						case 'messageRoom':
+							this.GET_SOCKET_OK_messageRoom( res.content )
+							break ;
 						default : break ;
 					}
 				})
 			},
-			// 通过socket调用后台接口
+			// 通过socket , 向后台发送请求数据 ;
 			imAjax( option ){
 				if( this.socket ){
 					!w.fn_index ? w.fn_index=1 : ++w.fn_index ;
@@ -97,29 +103,18 @@
 					});
 				}
 			},
-			// 调用接口成功 , 后台返回数据 
-			getImAjaxRes( res={} ){
+			// 收到后台消息 --> imajax返回数据 ;
+			GET_SOCKET_OK_imAjax( res={} ){
 				try{
-					res.fn ? 
-						w[res.opt.fn_success]( res.data ) : 
-						mui.alert( res.data )
-						//w[res.opt.fn_error]( res.data ) 
-				}catch(e){ console.log('eee->',e)}
-			},
-			// 登录成功
-			loginOk( userInfo ){
-				this.userInfo = userInfo ; this.$diff ;
-			},
-			// 判断是否已经登录
-			isLogin(){
-				alert(9)
-				this.imAjax({
-					next:true,
-					method:'isLogin',
-					success:(data)=>{
-						if( data&&data[0] ){ this.userInfo=data[0] ; this.$diff }
+					if( res.fn ){
+						w[res.opt.fn_success]( res.data );
+						w[res.opt.fn_success]=null ;
+					}else{
+						mui.alert( res.data );
+						//w[res.opt.fn_error]( res.data );
+						w[res.opt.fn_error]=null ;
 					}
-				})
+				}catch(e){ console.log('eee->',e)}
 			},
 		}
 	}

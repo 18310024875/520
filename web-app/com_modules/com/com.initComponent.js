@@ -150,31 +150,8 @@ export default function( Com ){
 		var $_father = $T.parentTree.DOM ,
 			$_dom = null 
 
-		// 存在v-if判断
-		if( D['vif'] ){
-			// 存在vif且没有注释节点 , 说明第一次读树 , 创建一个 ;
-			!$T['DOM_VIF_COMMENT'] ? $T['DOM_VIF_COMMENT']=document.createComment('') : null ;
-
-			// vif为false
-			if( !D['vif']['value'] ){
-				// 赋值$T.DOM ;
-				$_dom = $T.DOM = $T['DOM_VIF_COMMENT'] ;
-
-				// 读树源头不自动添加 ;
-				if( diffOrigin ){
- 
-				}else{
-					// 注释节点站位 ;
-					$_father.appendChild( $_dom )
-				}
-				// 终止下文 ;
-				return $T;
-			}
-		};
-		// ****** 下文不存在v-if判断 或 v-if判断为true ***** ;
-
-		// 判断 
-		if( tagName=='TEXT' ){  //文字节点
+		// 文字节点
+		if( tagName=='TEXT' ){  
 			// 静态
 			if( S['text'] ){
 				$_dom = $T.DOM = document.createTextNode( S['text'] );
@@ -184,14 +161,32 @@ export default function( Com ){
 				var text = D['vbind_double']['value'];
 				$_dom = $T.DOM = document.createTextNode( text );
 			}
-		}else{ //dom节点
+		}
+		// dom节点
+		else{ 
+			/* v-for v-if 组件 , 都会在外包一层( 组件特殊, 需要手动挂载 ) */
+
 			// 可能存在的子组件 ;
 			var COMPONENT_OPTIONS=this.$components[ tagName ] , COMPONENT_PROPS=null ;
-			if( COMPONENT_OPTIONS ){ //components替换节点
-				$_dom = $T.DOM = document.createElement('figure'); S['classList']?S['classList']+=' com_figure':S['classList']='com_figure';
-			}else if( tagName=='VFOR_BEGIN' ){ //v-for包裹节点 
-				$_dom = $T.DOM = document.createElement('article'); S['classList']?S['classList']+=' com_vforwrap':S['classList']='com_vforwrap';
-			}else{ // 常规dom节点
+			// 组件包裹节点
+			if( COMPONENT_OPTIONS ){ 
+				$_dom = $T.DOM = document.createElement('figure'); 
+				S['classList']?S['classList']+=' com_figure':S['classList']='com_figure';
+			}
+			// v-for包裹节点 
+			else 
+			if( tagName=='VFOR_BEGIN' ){
+				$_dom = $T.DOM = document.createElement('article'); 
+				S['classList']?S['classList']+=' com_vforwrap':S['classList']='com_vfor_wrap';
+			}
+			// v-if包裹节点
+			else 
+			if( tagName=='VIF_BEGIN' ){
+				$_dom = $T.DOM = document.createElement('dd'); 
+				S['classList']?S['classList']+=' com_vifwrap':S['classList']='com_vif_wrap';
+			}
+			// 常规dom节点
+			else{ 
 				$_dom = $T.DOM = document.createElement( tagName );
 			}
 
@@ -260,11 +255,12 @@ export default function( Com ){
 		// 递归
 		for(var i=0,len=$T.children.length ; i<len ; i++){
 			this.unsetTree( $T.children[i] , false );
-		}
+		};
 
-		if( $T['CHILD_COMPONENT'] ){
-			$T['CHILD_COMPONENT'].$destroy();
-		}else if( $T.DOM ){
+		// 存在组件卸载
+		$T['CHILD_COMPONENT'] ? $T['CHILD_COMPONENT'].$destroy() : null ;
+
+		if( $T.DOM ){
 			// 清除dom绑定事件 ;
 			if( $T.data_v['von'] ){
 				for(var m in $T.data_v['von']){
@@ -294,50 +290,7 @@ export default function( Com ){
 
 		// 真实元素 ( 必须存在 );
 		var $_father = $new_T.parentTree.DOM ,
-			$_dom = null 
-
-		// 存在v-if判断;
-		if( new_D['vif'] ){
-			// 记录v-if注释节点 ;
-			$new_T['DOM_VIF_COMMENT'] = $old_T['DOM_VIF_COMMENT'] ;
-
-			// v-if改变了
-			if( !!new_D['vif']['value'] != !!old_D['vif']['value'] ){
-				//  v-if从false变成true ; 创建树 ; dom节点插入到注释节点前 ;
-				if(new_D['vif']['value']){
-					// 读树
-					this.readTree( $new_T , $new_T.parentTree , true);// 此时 返回值==$new_T ;
-					// 此时v-if肯定为true 所以 $new_T肯定含有DOM ;
-					$_father.insertBefore( $new_T.DOM/*真实dom*/ , $old_T.DOM/*---注释站位---*/ );
-					$_father.removeChild( $old_T.DOM/*---注释站位---*/ );						
-				}
-				//  v-if从true变成false ; 移除树 ; 注释节点插入到dom节点前 ;
-				else{
-					// 赋值$T.DOM ;
-					$new_T.DOM = $new_T['DOM_VIF_COMMENT'] ;
-					// 此时v-if肯定为false
-					$_father.insertBefore( $new_T.DOM/*---注释站位---*/ , $old_T.DOM/*真实节点*/ );
-					// 移除dom引用 ;
-					this.unsetTree( $old_T /*真实dom*/ , true );
-				}
-				// v-if只要改变就阻止下文 ;
-				return ;
-			}
-			// v-if没变
-			else{
-				// v-if没变 && 仍然为false 阻止下文 ;
-				if(!new_D['vif']['value']){ 
-					// 赋值$T.DOM ;
-					$new_T.DOM = $new_T['DOM_VIF_COMMENT'] ;
-					// 阻止下文 ;
-					return ;
-				};
-			}
-		};
-		// **************** 下文不存在v-if判断 或 v-if判断没改变&&v-if为true *************** ;
-
-		// 赋值DOM ;
-		var $_dom = $new_T.DOM = $old_T.DOM ; 
+			$_dom = $new_T.DOM = $old_T.DOM ; 
 
 		// 判断
 		if( tagName=='TEXT' ){
@@ -380,8 +333,8 @@ export default function( Com ){
 				}
 			};
 
-			// 不同类型节点 ;
-			if( CHILD_COMPONENT ){ //components替换节点
+			// 组件包裹节点
+			if( CHILD_COMPONENT ){ 
 				// 赋值CHILD_COMPONENT ;
 				$new_T['CHILD_COMPONENT'] = CHILD_COMPONENT ;
 				// 更新子组件的props ;
@@ -391,7 +344,13 @@ export default function( Com ){
 				}
 				// 只要存在子组件 , 就继续渲染 ;
 				CHILD_COMPONENT.$update() ;
-			}else if( tagName=='VFOR_BEGIN' ){ //v-for包裹节点 
+			}
+			// v-for包裹节点 || v-if包裹节点 ;
+			else 
+			if( tagName=='VFOR_BEGIN' || tagName=='VIF_BEGIN' ){ 
+				/*
+					这么做其实是为了 优化v-for 添加大数据 ;
+				*/
 				//对比数组变化
 				var new_children = $new_T.children ;
 				var old_children = $old_T.children ;
@@ -439,7 +398,9 @@ export default function( Com ){
 						this.diffTree( $new_child , $new_T , $old_child );
 					};
 				}
-			}else{ // 常规dom节点
+			}
+			// 常规dom节点
+			else{ 
 				// 递归子节点 ;
 				for(var i=0,len=$new_T.children.length ; i<len ; i++){
 					var $new_child = $new_T.children[i] ;

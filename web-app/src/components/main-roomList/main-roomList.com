@@ -1,70 +1,18 @@
 <template>
 	<div class="main-roomList">
 
-		<div class="item-room">
+		<div class="item-room" v-for="(item,index) in this.$root.roomInfoList" @click="this.goActiveRoom(item.room_id)">
 			<div class="col1">
-				<div class="ava-wrap">
+				<div class="r-a-wrap">
 
-					<img src="assets/images/cpb.png"/>
+					<g_room_avatar :data="item" :size="55" :fontSize="20"/>
 
 				</div>
 			</div>
 			<div class="col2">
-				<div class="name">CPU 1024g</div>
-				<div class="laststr">你撤回了一条消息</div>
-				<div class="time">星期四</div>
-			</div>
-		</div><div class="item-room">
-			<div class="col1">
-				<div class="ava-wrap">
-
-					<img src="assets/images/cpb.png"/>
-
-				</div>
-			</div>
-			<div class="col2">
-				<div class="name">CPU 1024g</div>
-				<div class="laststr">你撤回了一条消息</div>
-				<div class="time">星期四</div>
-			</div>
-		</div><div class="item-room">
-			<div class="col1">
-				<div class="ava-wrap">
-
-					<img src="assets/images/cpb.png"/>
-
-				</div>
-			</div>
-			<div class="col2">
-				<div class="name">CPU 1024g</div>
-				<div class="laststr">你撤回了一条消息</div>
-				<div class="time">星期四</div>
-			</div>
-		</div><div class="item-room">
-			<div class="col1">
-				<div class="ava-wrap">
-
-					<img src="assets/images/cpb.png"/>
-
-				</div>
-			</div>
-			<div class="col2">
-				<div class="name">CPU 1024g</div>
-				<div class="laststr">你撤回了一条消息</div>
-				<div class="time">星期四</div>
-			</div>
-		</div><div class="item-room">
-			<div class="col1">
-				<div class="ava-wrap">
-
-					<img src="assets/images/cpb.png"/>
-
-				</div>
-			</div>
-			<div class="col2">
-				<div class="name">CPU 1024g</div>
-				<div class="laststr">你撤回了一条消息</div>
-				<div class="time">星期四</div>
+				<div class="name">{{ this.renderName(item) }}</div>
+				<div class="laststr">{{ (item.lastTalk && item.lastTalk.talk_content)||''}}</div>
+				<div class="time">{{ this.time(item.lastTalk && item.lastTalk.ctime) }}</div>
 			</div>
 		</div>
 
@@ -82,8 +30,31 @@
 
 			}
 		},
-		methods:{
 
+		mounted(){
+
+		},
+
+		methods:{
+			renderName( item ){
+				let uid = this.$root.userInfo.uid ;
+				let manList = item.manList ;
+				if( item.type==0 ){
+					let s = manList.filter(man=>{
+						return man.uid != uid ;
+					})
+					return s[0].cname ;
+				}else{
+					return item.room_name ;
+				}
+			},
+			time(t){
+				return App.$tool.time(+t)
+			},
+			goActiveRoom(room_id){
+				// 路由跳转 ;
+				location.hash = `activeRoom?room_id=${room_id}`;
+			}
 		}
 	}
 </script>
@@ -111,7 +82,8 @@
 				display: none;
 			}
 			&>.col1{
-				.ava-wrap{
+				.r-a-wrap{
+					background: red;
 					width: 55px;
 					height: 55px;
 					border-radius: 5px;

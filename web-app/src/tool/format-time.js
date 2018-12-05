@@ -34,6 +34,9 @@ function fun (date, fmt = 'YYYY-MM-DD HH:mm:ss') {
 
 // 调用 tool.time() ; 返回当前时间 ;
 export default function ( date , fmt='YYYY-MM-DD HH:mm:ss' ){
+
+    console.log('ppp' , typeof data)
+
     // 默认当前时间 ;
     if(typeof date === 'object'){
         // 对象转换日期

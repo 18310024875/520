@@ -150,9 +150,16 @@
 </script>
 <style lang="less">
 	#login,#register{
-		height: 100%;
-		position: relative;
-
+		position: absolute;
+		left: 0;top: 0;right: 0;bottom: 0;
+		font-size: 17px;
+		color: #111;
+			.mui-content{
+				position: absolute;
+				top: 0px;
+				left: 0;right: 0;
+				bottom: 0;
+			}
 			.area {
 				margin: 20px auto 0px auto;
 			}

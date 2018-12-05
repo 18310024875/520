@@ -1,29 +1,34 @@
 <template>
-	<div class="item-of-talk" :class="{self: this.isSelfTalk() }" v-if="this.data">
-			<div class="time"> 1分钟前 </div>
+	<div class="item-of-talk" :class="{self: this.isSelfTalk() }">
+			<div class="time"> {{this.time()}} </div>
 			<!-- <div class="time-no"></div> -->
 			<div class="item-wrapper">
 				<div class="part1">
 					<div class="ava-wrap">
 						<g_avatar 
 							class="gm-avatar" 
-							:size="'32px'"
-							:fontSize="'14px'"
-							:avatar="'111'" 
 							:radius="true"
-							:name="'asdfa'">		
+							:width="'32px'"
+							:height="'32px'"
+							:fontSize="'14px'"
+							:avatar="this.data.creator_avatar" 
+							:name="this.data.creator_cname">		
 						</g_avatar>
 					</div>
 				</div>
+				<!-- 文本 -->
 				<div class="part2" v-if="!this.data.files">
 					<div class="t-name">
-						阿斯顿发生
+						{{this.data.creator_cname}}
 					</div>
 					<div class="t-str">
-						阿萨达发大水
+						{{this.data.talk_content}}
 					</div>
 				</div>
-
+				<!-- 文件  -->
+				<div class="part2" v-if="this.data.files">
+					
+				</div>
 
 			</div>
 	</div>
@@ -48,16 +53,16 @@
 
 		methods:{
 			isSelfTalk(){
-				
-				return !!this.s ;
-				// let selfUid = IM.userInfo.uid ;
-				// return this.data.creator_id==selfUid ;
+				let uid = this.$root.userInfo.uid||-1 ;
+				return uid==this.data.creator_id ;
 			},
 			time(){
-				// return this.$tool.friendlyTime( Number(this.data.ctime) )
+				return this.$tool.friendlyTime( +this.data.ctime )
 			}
 		}
 	}
+
+
 
 
 				// <div class="part2" v-if="this.data.files">

@@ -47,11 +47,13 @@
 
 		<!-- 人员列表 -->
 		<div class="part3" v-if="this.type=='people'">
-			<listPeople :list="this.listPeople"></listPeople>		
+
+			<listPeople :list="this.$root.allPeople"></listPeople>		
 		</div>
 		<!-- 群组列表 -->
 		<div class="part3" v-if="this.type=='group'">
-			<listGroup  :list="this.listGroup"></listGroup>	
+
+			<listGroup  :list="this.$root.groupJoined"></listGroup>	
 		</div>
 		
 	</div>
@@ -93,29 +95,12 @@
 
 			getList(){
 				if( this.type=='people' ){
-					this.getAllPeople();
+					this.$root.getAllPeople();
 				}else{
-					this.getAllGroupJoined();
+					this.$root.getGroupJoined();
 				}
 			},
-			// 所有人员
-			getAllPeople(){
-				App.imAjax({
-					method:'getAllPeople',
-					success:( obj )=>{
-						this.listPeople=obj ; this.$diff ;
-					}
-				})
-			},
-			// 得到所有加入的组群
-			getAllGroupJoined(){
-				App.imAjax({
-					method:'getAllGroupJoined',
-					success:(obj)=>{
-						this.listGroup=obj ; this.$diff ;
-					}
-				})
-			}
+
 		}
 	}
 </script>

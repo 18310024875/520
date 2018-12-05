@@ -2,7 +2,11 @@
 	<div class="talk-bar">
 		<div class="lp">
 			<div class="input-wrap">
-				<input class="input" type="" name=""/>
+				<input 
+					class="input" type="" name="" 
+					:placeholder="this.placeholder||''" 
+					:value="this.value||''" 
+					@keydown="this.keydown"/>
 			</div>
 		</div>
 		<div class="rp">
@@ -12,7 +16,11 @@
 	</div>
 </template>
 <script type="text/javascript">
-	
+	/*
+		placeholder
+		value
+		enter
+	*/
 	export default{
 		props:{},
 		components:{
@@ -25,7 +33,11 @@
 			}
 		},
 		methods:{
-
+			keydown(e){
+				if( e.keyCode==13 ){
+					this.enter && this.enter( e.target.value );
+				}
+			}
 		}
 	}
 </script>

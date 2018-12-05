@@ -25,15 +25,17 @@ window.$ = require('jquery');
 
 // 防止多次点击
 $('body').on('click','.mui-btn',(e)=>{
-	e.target.style.pointerEvents='none';
+	// e.target.style.pointerEvents='none';
 	setTimeout(()=>{
-		e.target.style.pointerEvents='unset';
+		// e.target.style.pointerEvents='unset';
 	},1000)
 })
 
 // 全局组件 ;
 import g_avatar from 'components/common/g-avatar';
 Com.globalComponent('g_avatar',g_avatar);
+import g_room_avatar from 'components/common/g-room-avatar';
+Com.globalComponent('g_room_avatar',g_room_avatar);
 
 // 跟组件 ;
 window.App = new Com({
@@ -43,7 +45,7 @@ window.App = new Com({
 
 
 
-// http://39.105.201.170:3000/www/dist/index.html/
+// http://39.105.201.170:3000/www/dist/index.html
 
 
 
