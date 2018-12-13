@@ -1,14 +1,18 @@
 
+
+// let host = location.protocol+'//'+location.hostname+':3000' ;
+// let host = location.protocol+'//'+location.host ;
+
 const ConfigObj = {
 	dev:{
 		token:'',
-		// host: 'http://localhost:3000'
-		host: location.protocol+'//'+location.hostname+':3000'
+		uploadHost:'http://39.105.201.170:3000',
+		host: 'http://localhost:3000'
 	},
 	build:{
 		token:'',
-		// host:'http://39.105.201.170:3000'
-		host: location.protocol+'//'+location.host 
+		uploadHost: location.protocol+'//'+location.host,
+		host: location.protocol+'//'+location.host
 	}
 }
 

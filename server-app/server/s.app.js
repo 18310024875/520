@@ -18,6 +18,9 @@ var src = path.join(__dirname,'..');
 
 // 全局 解决跨域
 app.all('*', function(req, res, next) {
+
+	console.log( 11 , req )
+
 	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5555");
     
     res.setHeader("Access-Control-Allow-Credentials", "true");

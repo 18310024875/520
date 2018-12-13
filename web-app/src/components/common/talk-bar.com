@@ -35,7 +35,7 @@
 	export default{
 		data(){
 			return {
-				action:`${config.host}/file/upload?uid=${this.$root.userInfo.uid}`,
+				action:`${config.uploadHost}/file/upload?uid=${this.$root.userInfo.uid}`,
 				name:'upload'
 			}
 		},
