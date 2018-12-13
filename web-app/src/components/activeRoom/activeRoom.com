@@ -95,6 +95,7 @@
 					})
 					// 请求列表 ;
 					this.$root.getTalkListFromRoomId( this.room_id , '' , talkList=>{
+						console.error( talkList )
 						this.talkList = talkList ; 
 						this.$diff ;
 

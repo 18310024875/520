@@ -26,8 +26,35 @@
 					</div>
 				</div>
 				<!-- 文件  -->
-				<div class="part2" v-if="this.data.files">
-					
+				<div class="part2" v-if="this.data.file_originname">
+					<!-- 图片 -->
+					<div v-if="this.getFileType()=='img'" 
+						class="t-img"
+						:style="{
+							background: 'url('+this.data.file_serverUrl+') no-repeat',
+							backgroundSize: 'cover'
+						}">		
+					</div>
+					<!-- video -->
+					<div v-if="this.getFileType()=='mp4'" >
+						<video :src="this.data.file_serverUrl" controls="controls" preload="preload"/>
+					</div>
+					<!-- audio -->
+					<div v-if="this.getFileType()=='mp3'" >
+						<audio :src="this.data.file_serverUrl" controls="controls" preload="preload"/>
+					</div>
+					<!-- 文件 -->
+					<div v-if="this.getFileType()=='file'" 
+						class="t-file">
+						file
+<!-- 						<div class="tfl">
+							<img src="assets/images/icon_unknow.png"/>
+						</div>
+						<div class="tnr">
+							<div class="tnrn">{{file.fileName}}</div>
+							<div class="tnrs">{{file.fileSize}}</div>
+						</div> -->
+					</div>
 				</div>
 
 			</div>
@@ -52,6 +79,18 @@
 
 
 		methods:{
+			getFileType(){
+				let ext = this.data.file_originname.split('.').pop().toLocaleLowerCase();
+				if( ext=='gif'||ext=='jepg'||ext=='jpg'||ext=='jpeg'||ext=='png' ){
+					return 'img'
+				}else if(ext=='mp4'){
+					return 'mp4'
+				}else if(ext=='mp3'){
+					return 'mp3'
+				}else{
+					return 'file'
+				}
+			},
 			isSelfTalk(){
 				let uid = this.$root.userInfo.uid||-1 ;
 				return uid==this.data.creator_id ;
@@ -63,45 +102,6 @@
 	}
 
 
-
-
-				// <div class="part2" v-if="this.data.files">
-				// 	<div class="t-name">
-				// 		{{ this.data.creator.cname }}
-				// 	</div>
-				// 	<!-- 文件 -->
-				// 	<div 
-				// 		v-for="(file,k) in this.data.files"
-				// 		class="each-file-wrap"
-				// 		:style="{
-				// 			marginBottom: k==this.data.files.length-1?'0':'8px' 
-				// 		}">
-
-				// 		<!-- 图片 -->
-				// 		<div 
-				// 			v-if="file.isImg" 
-				// 			class="t-img"
-				// 			:style="{
-				// 				background: 'url('+file.httpUrl+') no-repeat',
-				// 				backgroundSize: 'cover'
-				// 			}">		
-				// 		</div>
-
-				// 		<!-- 文件 -->
-				// 		<div 
-				// 			v-if="file.isFile" 
-				// 			class="t-file">
-				// 			<div class="tfl">
-				// 				<img src="assets/images/icon_unknow.png"/>
-				// 			</div>
-				// 			<div class="tnr">
-				// 				<div class="tnrn">{{file.fileName}}</div>
-				// 				<div class="tnrs">{{file.fileSize}}</div>
-				// 			</div>
-				// 		</div>
-
-				// 	</div>
-				// </div>
 
 </script>
 <style lang="less">

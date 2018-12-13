@@ -58,7 +58,7 @@
 				}				
 			},
 			time(t){
-				return App.$tool.time(+t)
+				return t?App.$tool.time(+t):''
 			},
 			goActiveRoom(room_id){
 				// 路由跳转 ;

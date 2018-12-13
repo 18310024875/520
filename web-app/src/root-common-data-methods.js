@@ -57,7 +57,6 @@ export default{
 			App.imAjax({
 				method:'getRoomInfoList',
 				success:( data )=>{
-					console.log( data )
 					this.roomInfoList=data ; this.$diff ;   
 				}
 			})
