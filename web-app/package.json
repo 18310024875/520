@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --config ./webpack/dev.js",
-    "test": "rm -rf ./dist && cross-env NODE_ENV=test webpack --config ./webpack/build.js && rm -rf ../server-app/www/dist && mv ./dist ../server-app/www/dist",
     "build": "rm -rf ./dist && cross-env NODE_ENV=build webpack --config ./webpack/build.js && rm -rf ../server-app/www/dist && mv ./dist ../server-app/www/dist"
   },
   "author": "",

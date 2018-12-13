@@ -16,7 +16,7 @@ export default{
 	// 方法 ;
 	methods:{
 		// 向一个房间广播信息
-		sendMessageToRoom( room_id , content , fid ){
+		sendMessageToRoom( room_id , content , fid , yes){
 			this.imAjax({
 				method:'sendMessageToRoom',
 				data:{
@@ -24,9 +24,7 @@ export default{
 					content,
 					fid
 				},
-				success:( data )=>{
-					console.log( data )  
-				}
+				success:yes
 			})
 		},
 		// 收到后台消息 --> 向一个房间广播信息 ;
@@ -84,20 +82,36 @@ export default{
 		},
 
 		// 根据room_id请求会话列表 ;
-		getTalkListFromRoomId( room_id , last_id , callback ){
+		getTalkListFromRoomId( room_id , last_id , yes ){
 			App.imAjax({
 				method:'getTalkListFromRoomId',
 				data:{
 					room_id ,
 					last_id
 				},
-				success:( talkList )=>{
-					callback&&callback( talkList )
-				}
+				success:yes
 			})		
 		},
-
-
+		// 请求房间详情
+		getRoomDetail(room_id,yes){
+			App.imAjax({
+				method:'getRoomDetail',
+				data:{
+					room_id
+				},
+				success: yes
+			})
+		},
+		// 和一个人聊天
+		talkToOne(uid,yes){
+			App.imAjax({
+				method:'talkToOne',
+				data:{
+					uid
+				},
+				success:yes
+			})
+		}
 
 	}
 }

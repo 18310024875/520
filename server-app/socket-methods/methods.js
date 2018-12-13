@@ -203,7 +203,6 @@ m.prototype={
 					files.indexname as file_indexname,
 					files.originname as file_originname,
 					files.serverUrl as file_serverUrl,
-					files.dirUrl as file_dirurl,
 					files.creator_id as file_creator_id
 				FROM talk 
 					LEFT JOIN user  ON talk.creator_id=user.uid
@@ -260,7 +259,6 @@ m.prototype={
 							files.indexname as file_indexname,
 							files.originname as file_originname,
 							files.serverUrl as file_serverUrl,
-							files.dirUrl as file_dirurl,
 							files.creator_id as file_creator_id
 						FROM talk 
 							LEFT JOIN user  ON talk.creator_id=user.uid 
@@ -305,12 +303,13 @@ m.prototype={
 					rooms.*,
 					user.cname as creator_cname, 
 					user.name as creator_name, 
-				user.avatar as creator_avatar
+					user.avatar as creator_avatar
 				FROM rooms 
-					JOIN user ON rooms.creator_id=user.uid `, res=>{
-				let myrooms = res.filter(room=>{
-				let join_ids = room.join_ids;
-				let ids_arr = $common.split_s(join_ids);
+					JOIN user ON rooms.creator_id=user.uid `, 
+		res=>{
+			let myrooms = res.filter(room=>{
+			let join_ids = room.join_ids;
+			let ids_arr = $common.split_s(join_ids);
 				return ids_arr.has( uid );
 			})
 			// 房间添加人员列表 ;
@@ -321,6 +320,32 @@ m.prototype={
 				})
 			})
 		})
+	},
+	// 请求房间信息
+	getRoomDetail(opt){
+		var $query = G.MYSQL.$query ;
+		let socket = this.socket ;
+		let session = socket.handshake.session ;
+		let data = opt.data ;
+
+		let room_id = data.room_id ;
+		if( room_id ){
+			$query(`SELECT 
+						rooms.*,
+						user.cname as creator_cname, 
+						user.name as creator_name, 
+						user.avatar as creator_avatar
+					FROM rooms 
+						JOIN user ON rooms.creator_id=user.uid WHERE room_id="${room_id}"`, 
+			res=>{
+				let myrooms = res ;
+				// 房间添加人员列表 ;
+				this.mapRoomsAddmanList(myrooms, myrooms2=>{
+					// 房间添加最后消息 ;
+					this.snedImAjaxRes(opt,1, myrooms2[0] ) ;
+				})
+			})
+		}
 	},
 
 	// 便利房间列表 , 添加人员列表 ;
@@ -366,8 +391,33 @@ m.prototype={
 		}else{
 			callback( roomList )
 		}
-	}
+	},
+	// 和某人谈话
+	talkToOne(opt){
+		var $query = G.MYSQL.$query ;
+		let socket = this.socket ;
+		let session = socket.handshake.session ;
+		let data = opt.data ;
 
+		let uid = session.uid ;
+		let sid = data.uid ;
+		// 单聊情况 , 房间join_ids是惟一的
+		let join_ids = [uid,sid].sort((a,b)=>(a-b)).join()
+		$query(`SELECT * FROM rooms WHERE type="0" AND join_ids="${join_ids}"`, res=>{
+			if(res.length){
+				// 存在房间 , 返回房间信息 ;
+				this.snedImAjaxRes(opt, 1, res[0] );
+			}else{
+				// 不存在房间 , 创建房间 , 再返回
+				let ctime = $common.getTime();
+				$query(`INSERT rooms (type,creator_id,join_ids,ctime) VALUES("0","${uid}","${join_ids}","${ctime}")`, res=>{
+					$query(`SELECT * FROM rooms WHERE ctime="${ctime}"`, res=>{
+						this.snedImAjaxRes(opt, 1, res[0] );
+					})
+				})
+			}
+		})
+	}
 
 
 

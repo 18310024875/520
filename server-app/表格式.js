@@ -54,7 +54,6 @@
   `size` int(10) DEFAULT NULL,
   `indexname` varchar(500) NOT NULL,
   `originname` varchar(500) NOT NULL,
-  `dirUrl` varchar(1000) DEFAULT NULL,
   `serverUrl` varchar(1000) DEFAULT NULL,
   `creator_id` varchar(32) DEFAULT NULL,
   `ctime` varchar(13) DEFAULT NULL,

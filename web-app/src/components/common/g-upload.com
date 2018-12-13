@@ -1,63 +1,70 @@
 <template>
 
-	<form ref="form">
+	<form ref="form" class="upload_form">
 
 		<input 
 			ref="input" 
 			type="file" 
 			enctype="multipart/form-data" 
-			multiple="multiple" 
 			@change="this.inputChange"/>
 
 	</form>
 
 </template>
 <script type="text/javascript">
-	
-
 	/*	
 		props
-			getUploadInfo
+			action
+			name
 			success
+			error
 	*/
-
-	import upload from './g-upload-FormData.js';
-
 	export default{
-		props:{},
-		components:{
-
-		},
-
 		data(){
-			return {
-
-			}
+			return {}
 		},
+
 		methods:{
 			resetForm(){
 				try{
-					var form = this.$refs.form ;
+					let form = this.$refs.form ;
 						form.reset();
 				}catch(e){}
 			},
 			inputChange(){
-				var input = this.$refs.input ;
-				var fileList = this.$refs.input.files || [] ;
-
-				var uploadInfo = this.getUploadInfo&&this.getUploadInfo() ;
-
-				if( uploadInfo && fileList.length ){
-					upload( fileList , uploadInfo.name , uploadInfo.action , res=>{
-
-						this.success && this.success( res );
-
-						this.resetForm();
-					},err=>{
-						this.resetForm() ;
-					});
+				// // 拓展名
+				// let ext = file.name.split('.').pop();
+				// // 文件大小(兆)
+				// let kb  = Number((file.size/1024).toFixed(2));
+				let action=this.action ;
+				let name = this.name ;
+				if( action&&name ){
+					let input = this.$refs.input ;
+					let files = this.$refs.input.files ;
+					let fd  = new window.FormData;
+						fd.append( name , files[0] );
+					// ajax
+					let xhr = new window.XMLHttpRequest;
+				        xhr.upload.onprogress = (e)=>{
+				        	console.log( (e.loaded/e.total) )
+				        };
+				        xhr.onreadystatechange = ()=>{
+				            if( xhr.readyState == 4 ) {
+				            	if( xhr.status == 200){
+				            		this.success && this.success( xhr.responseText );
+				            		this.resetForm();
+				            	}else{
+									this.error && this.error()
+				            	};
+				            }
+				        };
+				        // 发送
+				        xhr.open('POST', action , true);
+				        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+				        xhr.withCredentials = true;
+				        // 发送FormData对象 ;
+				        xhr.send( fd );	
 				}	
-
 			}
 		}
 	}

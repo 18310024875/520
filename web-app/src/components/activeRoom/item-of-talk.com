@@ -162,6 +162,7 @@
 				    word-break: break-all;
 				    word-wrap: break-word;
 				    color: #333;
+				    min-height: 22px;
 				}
 				.t-img{
 					display: inline-block;

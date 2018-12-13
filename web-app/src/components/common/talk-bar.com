@@ -11,7 +11,16 @@
 		</div>
 		<div class="rp">
 			<img src="assets/images/kaixin.png"/>
-			<img src="assets/images/tianjia.png"/>
+			<label>
+				<img src="assets/images/tianjia.png"/>
+				<g_upload 
+					style="display:none;" 
+					:action="this.action"
+					:name="this.name"
+					:success="this.success.bind(this)"
+					:error="this.error.bind(this)"
+				></g_upload>
+			</label>
 		</div>
 	</div>
 </template>
@@ -20,19 +29,27 @@
 		placeholder
 		value
 		enter
+		upload
 	*/
+	import config from 'src/config';
 	export default{
-		props:{},
-		components:{
-
-		},
-
 		data(){
 			return {
-
+				action:`${config.host}/file/upload?uid=${this.$root.userInfo.uid}`,
+				name:'upload'
 			}
 		},
 		methods:{
+			success(res){
+				res = JSON.parse(res);
+				if( res.code==0 ){
+					// 上传成功后 , 广播文件
+					this.upload && this.upload( res.data );
+				}
+			},
+			error(){
+				mui.alert('上传失败')
+			},
 			keydown(e){
 				if( e.keyCode==13 ){
 					this.enter && this.enter( e.target.value );

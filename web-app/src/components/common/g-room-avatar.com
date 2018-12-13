@@ -134,10 +134,14 @@
 				let uid = this.$root.userInfo.uid ;
 				let manList = this.data.manList ;
 
-				let s = manList.filter(man=>{
+				let sender = manList.filter(man=>{
 					return man.uid != uid ;
 				})
-				return s[0] ;
+				if( sender.length==1 ){
+					return sender[0];
+				}else if(sender.length==0){
+					return manList[0];
+				}
 			}
 		}
 	}

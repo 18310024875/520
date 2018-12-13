@@ -2,15 +2,13 @@
 const ConfigObj = {
 	dev:{
 		token:'',
-		host:'localhost:3000'
-	},
-	test:{
-		token:'',
-		host:'localhost:3000'
+		// host: 'http://localhost:3000'
+		host: location.protocol+'//'+location.hostname+':3000'
 	},
 	build:{
 		token:'',
-		host:'http://39.105.201.170:3000'
+		// host:'http://39.105.201.170:3000'
+		host: location.protocol+'//'+location.host 
 	}
 }
 

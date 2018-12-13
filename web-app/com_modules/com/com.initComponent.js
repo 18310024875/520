@@ -40,7 +40,7 @@ export default function( Com ){
 			// 装refs树的盒子
 			this.$refs = {} ;
 			// data 绑定this ;
-			this.$data = ($.type( opt.data )=='function'? opt.data() : JSON.parse(JSON.stringify( opt.data || {} ))) ;
+			this.$data = ($.type( opt.data )=='function'? opt.data.call(this) : JSON.parse(JSON.stringify( opt.data || {} ))) ;
 			// 事件 绑定this ;
 			this.$methods = opt.methods||{} ;
 			// 组件 绑定this;

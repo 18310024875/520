@@ -126,7 +126,7 @@
 		top: 0;bottom: 0;
 		overflow: hidden;
 		background: white;
-		&>.connect-mask{
+		.connect-mask{
 			position: absolute;
 			left: 0;top: 0;
 			right: 0;bottom: 0;
@@ -134,7 +134,7 @@
 			background: rgba(0,0,0,0.5);
 			&>.mui-sppin{
 				position: absolute;
-				left: 50%;top: 45%;
+				left: 46.5%;top: 45%;
 				transform: translate(-50%,-50%);
 				color: white;
 			}

@@ -33,9 +33,12 @@ $('body').on('click','.mui-btn',(e)=>{
 
 // 全局组件 ;
 import g_avatar from 'components/common/g-avatar';
-Com.globalComponent('g_avatar',g_avatar);
 import g_room_avatar from 'components/common/g-room-avatar';
+import g_upload from 'components/common/g-upload';
+
+Com.globalComponent('g_avatar',g_avatar);
 Com.globalComponent('g_room_avatar',g_room_avatar);
+Com.globalComponent('g_upload',g_upload);
 
 // 跟组件 ;
 window.App = new Com({

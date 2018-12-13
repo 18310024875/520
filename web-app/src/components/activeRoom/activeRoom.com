@@ -2,7 +2,9 @@
 	<div class="activeRoom">
 		<header class="mui-bar mui-bar-nav">
 			<a class="white mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="white mui-title"> 房间 11 </h1>
+			<h1 class="white mui-title"> 
+				{{this.getRoomName()}}
+			</h1>
 			<div class="white fr mui-icon">
 				<span class="sp1"></span><span class="sp2"></span><span class="sp3"></span>
 			</div>
@@ -25,7 +27,8 @@
 				<talkBar 
 					style="height:100%;" 
 					:value="this.value"
-					:enter="this.sendMessageToRoom.bind(this)">
+					:enter="this.sendText.bind(this)"
+					:upload="this.sendFile.bind(this)">
 				</talkBar>
 
 			</div>
@@ -47,10 +50,12 @@
 			return {
 				// 地址上的房间id
 				room_id:'',
+				// 房间详情
+				roomDetail:'',
 				// 谈话列表
 				talkList:[],
 				// 输入值
-				value:'1',
+				value:'',
 			}
 		},
 		
@@ -67,8 +72,6 @@
 						let offsetHeight = dom.offsetHeight ;
 						let scrollTop = dom.scrollTop ;
 						let scrollHeight = dom.scrollHeight ;
-
-						console.log( '888888888888----->' , scrollHeight-(offsetHeight+scrollTop) );
 						if( scrollHeight-(offsetHeight+scrollTop)<200 ){
 							dom.scrollTop = 9999 ;
 						}else{
@@ -85,6 +88,11 @@
 				let room_id = this.$router.query.room_id ;
 				if( room_id ){
 					this.room_id = room_id ;
+					// 请求房间信息
+					this.$root.getRoomDetail(this.room_id,roomDetail=>{
+						this.roomDetail=roomDetail;
+						this.$diff ;
+					})
 					// 请求列表 ;
 					this.$root.getTalkListFromRoomId( this.room_id , '' , talkList=>{
 						this.talkList = talkList ; 
@@ -96,6 +104,32 @@
 
 						this.init_scrollFn();
 					})
+				}
+			},
+			// 正确房间名
+			getRoomName(){
+				let d = this.roomDetail ;
+				if( d ){
+					if(d.type=='1'){
+						return `群聊 : ${d.room_name}(${d.manList.length})` || '暂无房间名'
+					}else{
+						let manList = d.manList;
+						if( manList.length<=2 ){
+							let uid = this.$root.userInfo.uid ;
+							let sender = manList.filter((a,b)=>(a.uid!=uid));
+							if( sender.length==1 ){
+								return sender[0].cname
+							}else if(sender.length==0){
+								return 'Talk with youself'
+							}else{
+								return '--->房间观察者--->'
+							}
+						}else{
+							return '人员列表超过3人'
+						}
+					}
+				}else{
+					return ''
 				}
 			},
 			// 上拉加载 ;
@@ -121,13 +155,21 @@
 					} 
 				}
 			},
-			// 点击发送数据 ;
-			sendMessageToRoom(value){
+			// 广播文本 ;
+			sendText(value){
 				this.value = value ;
 				this.$diff ;
 				if( this.value ){
-					this.$root.sendMessageToRoom( this.room_id , this.value , '' );
+					this.$root.sendMessageToRoom( this.room_id , this.value , '' ,res=>{
+						this.value='';this.$diff ;
+					});
 				}
+			},
+			// 广播文件 ;
+			sendFile(file){
+				this.$root.sendMessageToRoom( this.room_id , '' , file.fid ,res=>{
+					
+				});
 			}
 		}
 	}

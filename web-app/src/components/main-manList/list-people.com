@@ -2,7 +2,7 @@
 	<ul class="list-people">
 		<li class="work-item" v-for="(item,key) in (this.list||[])" v-if="item.length">
 			<p> {{key}} </p>
-			<div class="man-item p-row" v-for="(v,k) in item">
+			<div class="man-item p-row" v-for="(v,k) in item" @click="this.talkToOne(v)">
 				<div class="col1">
 					<div class="ava-wrap">
 						<img src="assets/images/cpb.png"/>
@@ -29,7 +29,11 @@
 		},
 
 		methods:{
-
+			talkToOne(man){
+				this.$root.talkToOne(man.uid,room=>{
+					location.hash = `/activeRoom?room_id=${room.room_id}`;
+				});
+			}	
 		}
 	}
 </script>

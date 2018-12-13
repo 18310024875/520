@@ -37,23 +37,32 @@
 
 		methods:{
 			renderName( item ){
-				let uid = this.$root.userInfo.uid ;
-				let manList = item.manList ;
-				if( item.type==0 ){
-					let s = manList.filter(man=>{
-						return man.uid != uid ;
-					})
-					return s[0].cname ;
+				let d = item ;
+				if(d.type=='1'){
+					return `群聊 : ${d.room_name}(${d.manList.length})` || '暂无房间名'
 				}else{
-					return item.room_name ;
-				}
+					let manList = d.manList;
+					if( manList.length<=2 ){
+						let uid = this.$root.userInfo.uid ;
+						let sender = manList.filter((a,b)=>(a.uid!=uid));
+						if( sender.length==1 ){
+							return sender[0].cname
+						}else if(sender.length==0){
+							return 'Talk with youself'
+						}else{
+							return '--->房间观察者--->'
+						}
+					}else{
+						return '人员列表超过3人'
+					}
+				}				
 			},
 			time(t){
 				return App.$tool.time(+t)
 			},
 			goActiveRoom(room_id){
 				// 路由跳转 ;
-				location.hash = `activeRoom?room_id=${room_id}`;
+				location.hash = `/activeRoom?room_id=${room_id}`;
 			}
 		}
 	}
