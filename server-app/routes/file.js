@@ -1,11 +1,10 @@
-
 var express = require('express');
 var router = express.Router();
 
 var path = require('path');
 var fs = require('fs');
 
-var getTime = ()=>{
+function getTime(){
     return (new Date()).getTime()-500 + parseInt(Math.random(1)*1000) ;
 };
 
@@ -52,6 +51,8 @@ router.post('/upload', (req, res, next)=>{
                         }))  
                     })
                 })
+                // 删除暂存文件
+                fs.unlink( tmp_path );
             })
             // 移动流
             R.pipe(W);
