@@ -17,7 +17,7 @@
 					</div>
 				</div>
 				<!-- 文本 -->
-				<div class="part2" v-if="!this.data.files">
+				<div class="part2" v-if="!this.data.file_originname">
 					<div class="t-name">
 						{{this.data.creator_cname}}
 					</div>
@@ -26,10 +26,11 @@
 					</div>
 				</div>
 				<!-- 文件  -->
-				<div class="part2" v-if="this.data.file_originname">
+				<div class="part2" v-if="this.data.file_originname" style="margin-top:3px">
 					<!-- 图片 -->
-					<div v-if="this.getFileType()=='img'" 
-						class="t-img"
+					<div v-if="this.getFileType()=='img'" class="t-img"
+						 ref="img"
+						 @click="this.openWin"
 						:style="{
 							background: 'url('+this.data.file_serverUrl+') no-repeat',
 							backgroundSize: 'cover'
@@ -37,23 +38,25 @@
 					</div>
 					<!-- video -->
 					<div v-if="this.getFileType()=='mp4'" >
-						<video :src="this.data.file_serverUrl" controls="controls" preload="preload"/>
+						<video :src="this.data.file_serverUrl"
+								width="180" height="180" style="background:black;border-radius: 5px;" 
+								controls="controls" preload="preload"/>
 					</div>
 					<!-- audio -->
 					<div v-if="this.getFileType()=='mp3'" >
-						<audio :src="this.data.file_serverUrl" controls="controls" preload="preload"/>
+						<audio :src="this.data.file_serverUrl" 
+							    controls="controls" preload="preload"/>
 					</div>
 					<!-- 文件 -->
-					<div v-if="this.getFileType()=='file'" 
-						class="t-file">
-						file
-<!-- 						<div class="tfl">
+					<div v-if="this.getFileType()=='file'" class="t-file"
+						 @click="this.openWin">
+						<div class="tfl">
 							<img src="assets/images/icon_unknow.png"/>
 						</div>
 						<div class="tnr">
-							<div class="tnrn">{{file.fileName}}</div>
-							<div class="tnrs">{{file.fileSize}}</div>
-						</div> -->
+							<div class="tnrn">{{this.data.file_originname}}</div>
+							<div class="tnrs">{{((this.data.file_szie||0)/1024).toFixed(1)+'KB'}}</div>
+						</div>
 					</div>
 				</div>
 
@@ -77,6 +80,13 @@
 			}
 		},
 
+		updated(){
+			let img = this.$refs.img ;
+			if( img ){
+				img.style.backgroundSize='cover';
+			}
+		},
+
 
 		methods:{
 			getFileType(){
@@ -97,6 +107,9 @@
 			},
 			time(){
 				return this.$tool.friendlyTime( +this.data.ctime )
+			},
+			openWin(){
+				window.open( this.data.file_serverUrl )
 			}
 		}
 	}
@@ -183,19 +196,19 @@
 				.t-file{
 					display: inline-block;
 					border: 1px solid #ededed;
-					padding: 10px;
+					padding: 8px;
 					border-radius: 4px;
-					width: 228px;
-					height: 67px;
+					width: 215px;
+					height: 60px;
 					background: #fff;
-					padding-left: 65px;
+					padding-left: 60px;
 					position: relative;
 					.tfl{
 						position: absolute;
-						width: 45px;
-						height: 45px;
+						width: 40px;
+						height: 40px;
 						left: 10px;
-						top: 10px;
+						top: 9px;
 						img{
 							width: 100%;
 							height: 100%;
@@ -209,7 +222,6 @@
 						.tnrs{
 							color: #9e9e9e;
 							font-size: 12px;
-							margin-top: 3px;
 						}
 					}
 				}
