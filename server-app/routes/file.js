@@ -52,7 +52,7 @@ router.post('/upload', (req, res, next)=>{
                     })
                 })
                 // 删除暂存文件
-                fs.unlink( tmp_path );
+                fs.unlink( tmp_path , ()=>{});
             })
             // 移动流
             R.pipe(W);

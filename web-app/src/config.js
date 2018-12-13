@@ -7,7 +7,6 @@ const ConfigObj = {
 	dev:{
 		token:'',
 		uploadHost:'http://39.105.201.170:3000',
-		uploadHost: location.protocol+'//'+location.hostname+':3000',
 		host: location.protocol+'//'+location.hostname+':3000'
 	},
 	build:{
