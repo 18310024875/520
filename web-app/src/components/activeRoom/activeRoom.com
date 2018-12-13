@@ -72,7 +72,7 @@
 						let offsetHeight = dom.offsetHeight ;
 						let scrollTop = dom.scrollTop ;
 						let scrollHeight = dom.scrollHeight ;
-						if( scrollHeight-(offsetHeight+scrollTop)<200 ){
+						if( scrollHeight-(offsetHeight+scrollTop)<400 ){
 							dom.scrollTop = 9999 ;
 						}else{
 

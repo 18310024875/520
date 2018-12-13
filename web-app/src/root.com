@@ -70,14 +70,15 @@
 					this.socket_connect=false ; this.$diff ;
 				})
 				this.socket.on('imMessage',(res)=>{
-					console.log('imMessage----->',res)
 					switch( res.type ){
 						// imAjax
 						case 'imAjax':
+							console.log('imAjax----->',res.content.opt.method,res.content.data);
 							this.GET_SOCKET_OK_imAjax( res.content )
 							break ;
 						// 向一个房间发送消息 ;
 						case 'messageRoom':
+							console.log('messageRoom----->',res.content);
 							this.GET_SOCKET_OK_messageRoom( res.content )
 							break ;
 						default : break ;

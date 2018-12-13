@@ -3,6 +3,7 @@
 		<div class="lp">
 			<div class="input-wrap">
 				<input 
+					style="background: red" 
 					class="input" type="" name="" 
 					:placeholder="this.placeholder||''" 
 					:value="this.value||''" 
@@ -52,6 +53,7 @@
 			},
 			keydown(e){
 				if( e.keyCode==13 ){
+					alert(e.target.value)
 					this.enter && this.enter( e.target.value );
 				}
 			}

@@ -18,20 +18,13 @@
 <script type="text/javascript">
 	
 	export default{
-		props:{},
-		components:{
-
-		},
-
 		data(){
-			return {
-
-			}
+			return {}
 		},
 
 		mounted(){
-
-		},
+			this.$root.getGroupJoined();
+		},	
 
 		methods:{
 

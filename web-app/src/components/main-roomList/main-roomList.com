@@ -1,7 +1,7 @@
 <template>
 	<div class="main-roomList">
 
-		<div class="item-room" v-for="(item,index) in this.$root.roomInfoList" @click="this.goActiveRoom(item.room_id)">
+		<div class="item-room longTap" v-for="(item,index) in this.$root.roomInfoList" @click="this.goActiveRoom(item.room_id)">
 			<div class="col1">
 				<div class="r-a-wrap">
 
@@ -10,9 +10,9 @@
 				</div>
 			</div>
 			<div class="col2">
-				<div class="name">{{ this.renderName(item) }}</div>
-				<div class="laststr">{{ (item.lastTalk && item.lastTalk.talk_content)||''}}</div>
-				<div class="time">{{ this.time(item.lastTalk && item.lastTalk.ctime) }}</div>
+				<div class="name elli">{{ this.renderName(item) }}</div>
+				<div class="laststr elli">{{ this.renderLastTalk(item) }}</div>
+				<div class="time">{{ this.renderLastTalkTime(item) }}</div>
 			</div>
 		</div>
 
@@ -32,7 +32,13 @@
 		},
 
 		mounted(){
+			this.$root.getRoomInfoList();
 
+			this.$evtbus.off('messageRoom').on('messageRoom',(talk)=>{
+				try{
+					this.$root.getRoomInfoList();
+				}catch(e){}
+			})	
 		},
 
 		methods:{
@@ -57,7 +63,20 @@
 					}
 				}				
 			},
-			time(t){
+			renderLastTalk(item){
+				let lastTalk = item.lastTalk ;
+				if( lastTalk ){
+					if( lastTalk.file_originname ){
+						return lastTalk.file_originname;
+					}else{
+						return lastTalk.talk_content||''
+					}
+				}else{
+					return '';
+				}
+			},
+			renderLastTalkTime(item){
+				let t = item.lastTalk && item.lastTalk.ctime;
 				return t?App.$tool.time(+t):''
 			},
 			goActiveRoom(room_id){

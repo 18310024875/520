@@ -80,10 +80,6 @@
 			}
 		},
 
-		mounted(){
-			this.getList();
-		},
-
 		methods:{
 			onEnter( kw ){
 				this.kw=kw ; this.$diff ;
@@ -91,16 +87,7 @@
 			checkNav( type ){
 				this.kw='' ; this.type=type ; this.$diff ;
 				this.getList();
-			},
-
-			getList(){
-				if( this.type=='people' ){
-					this.$root.getAllPeople();
-				}else{
-					this.$root.getGroupJoined();
-				}
-			},
-
+			}
 		}
 	}
 </script>

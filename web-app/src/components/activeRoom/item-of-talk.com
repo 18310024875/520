@@ -39,12 +39,12 @@
 					<!-- video -->
 					<div v-if="this.getFileType()=='mp4'" >
 						<video :src="this.data.file_serverUrl"
-								width="180" height="180" style="background:black;border-radius: 5px;" 
+								width="180" height="180" style="background:black;overflow:hidden;border-radius:5px;" 
 								controls="controls" preload="preload"/>
 					</div>
 					<!-- audio -->
 					<div v-if="this.getFileType()=='mp3'" >
-						<audio :src="this.data.file_serverUrl" 
+						<audio :src="this.data.file_serverUrl" style="overflow:hidden;border-radius: 4px;"  
 							    controls="controls" preload="preload"/>
 					</div>
 					<!-- 文件 -->

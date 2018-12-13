@@ -29,8 +29,8 @@ body {
     word-break: break-all;
     background-color: #f1f1f1;
     font-size:13px;
+    -webkit-user-select:auto;
 }
-
 html,body,#appWrapper{
 	position:relative;
 	height:100%;
@@ -102,8 +102,13 @@ body .ui-dialog{
     }
 }
 
+input,textarea{
+    -webkit-user-select:text !important;
+}
 
 .mui-toast-container{
     bottom:unset;
     top:40%;
 }
+
+

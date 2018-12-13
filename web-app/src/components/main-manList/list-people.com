@@ -18,14 +18,12 @@
 <script type="text/javascript">
 	
 	export default{
-		components:{
-
+		data(){
+			return {}
 		},
 
-		data(){
-			return {
-
-			}
+		mounted(){
+			this.$root.getAllPeople();
 		},
 
 		methods:{
