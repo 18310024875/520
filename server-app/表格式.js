@@ -1,21 +1,21 @@
 // 用户信息
 | user  | CREATE TABLE `user` (
-  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `account` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL,
-  `join_rooms` text,
-  `cname` varchar(30) DEFAULT NULL,
-  `avatar` varchar(200) DEFAULT NULL,
-  `name` varchar(30) DEFAULT NULL,
-  `des` varchar(200) DEFAULT NULL,
-  `sex` smallint(6) DEFAULT NULL,
-  `age` tinyint(4) DEFAULT NULL,
-  `ctime` varchar(13) DEFAULT NULL,
-  `utime` varchar(13) DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  UNIQUE KEY `account` (`account`),
-  UNIQUE KEY `ctime` (`ctime`)
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 |
+    `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `account` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+    `password` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+    `cname` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `avatar` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `des` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `sex` smallint(6) DEFAULT NULL,
+    `age` tinyint(4) DEFAULT NULL,
+    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `discover_bg` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+    PRIMARY KEY (`uid`),
+    UNIQUE KEY `account` (`account`),
+    UNIQUE KEY `ctime` (`ctime`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 
 
 // 房间信息

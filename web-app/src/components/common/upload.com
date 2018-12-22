@@ -54,7 +54,8 @@
 				            		this.success && this.success( xhr.responseText );
 				            		this.resetForm();
 				            	}else{
-									this.error && this.error()
+									this.error && this.error();
+									this.resetForm();
 				            	};
 				            }
 				        };

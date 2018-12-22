@@ -13,6 +13,9 @@
 		<!-- 路由容器 -->
 		<router-view class="1-router-view" v-if="this.userInfo"></router-view>
 
+		<!-- 选人组件 -->
+		<selectMan ref="selectMan" v-if="this.userInfo"></selectMan>
+
 	</div>
 
 
@@ -31,9 +34,13 @@
 	// 登录页面
 	import login from 'components/login/login';
 
+	// 选人
+	import selectMan from 'components/common/select-man';
+
 	export default{
 		components:{
-			login
+			login,
+			selectMan
 		},
 
 		data(){
@@ -97,6 +104,7 @@
 					option['fn_error'] = fn_error ;
 					// 向服务器发送本地运行状态--->后台判断验证 ;
 					option['ENV']=ENV ;
+					!option.data ? option.data={} : null ;
 					// 发送给服务端 ;
 					this.socket.emit('imMessage', {
 						type:'imAjax',
@@ -117,6 +125,11 @@
 					}
 				}catch(e){ console.log('eee->',e)}
 			},
+			// 开启选人 
+			openSelectMan( ...val ){
+				let selectMan = this.$refs.selectMan.component ;
+					selectMan.open( ...val )
+			}
 		}
 	}
 </script>

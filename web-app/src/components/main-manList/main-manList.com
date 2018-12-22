@@ -22,7 +22,7 @@
 		</div>
 		<!-- 群相关信息 -->
 		<div class="part2" v-if="this.type=='group'">
-			<div class="p-row part2-1">
+			<div class="p-row part2-1" @click="this.createGroup">
 				<div class="col1">
 					<div class="ava-wrap">
 						<span class="mui-icon mui-icon-personadd ic"></span>
@@ -48,12 +48,12 @@
 		<!-- 人员列表 -->
 		<div class="part3" v-if="this.type=='people'">
 
-			<listPeople :list="this.$root.allPeople"></listPeople>		
+			<listPeople></listPeople>		
 		</div>
 		<!-- 群组列表 -->
 		<div class="part3" v-if="this.type=='group'">
 
-			<listGroup  :list="this.$root.groupJoined"></listGroup>	
+			<listGroup></listGroup>	
 		</div>
 		
 	</div>
@@ -74,19 +74,49 @@
 		data(){
 			return {
 				type: 'people' , //people , group
-				kw:'11',
+				kw:'',
 				listPeople:[],
 				listGroup:[]
 			}
 		},
 
+		destroyed(){
+			this.$root.getAllPeople();
+			this.$root.getGroupJoined();
+		},
+
 		methods:{
 			onEnter( kw ){
 				this.kw=kw ; this.$diff ;
+				if( this.type=='people' ){
+					this.$root.getAllPeople( this.kw );
+				}else{
+					this.$root.getGroupJoined( this.kw );
+				}
 			},
 			checkNav( type ){
 				this.kw='' ; this.type=type ; this.$diff ;
-				this.getList();
+			},
+			createGroup(){
+				this.$root.openSelectMan('', choose=>{
+					if(choose.length){
+						let parts_ids = choose.map(user=>user.uid).join(',');
+						mui.prompt('','请输入群名称',[], obj=>{
+							let room_name = obj.value ;
+							if( room_name ){
+								this.$root.createGroup( room_name , parts_ids ,()=>{
+									mui.alert('创建成功');
+
+									this.$root.getGroupJoined( this.kw );
+								})
+							}else{
+								mui.alert('群名称为空')
+							}
+						})
+					}else{
+						mui.alert('至少选择一个人创建群')
+					}
+				})
 			}
 		}
 	}

@@ -9,9 +9,9 @@ export default{
 		// 我的聊天列表 , 含最后一条消息 ;
 		roomInfoList:[],
 		// 所有用户
-		allPeople:[],
+		allPeople:{},
 		// 所有关于我的群
-		groupJoined:[]
+		groupJoined:{}
 	},
 	// 方法 ;
 	methods:{
@@ -45,33 +45,55 @@ export default{
 		loginOk( userInfo ){
 			this.userInfo = userInfo ; this.$diff ;
 			// 登录成功后 第一次请求所有预制数据;
-			this.getRoomInfoList();
-			this.getAllPeople();
-			this.getGroupJoined();
+			// this.getRoomInfoList();
+			// this.getAllPeople();
+			// this.getGroupJoined();
 		},
 
 		// 获取和我相关的房间 和房间最后一条消息 ;
 		getRoomInfoList(){
 			App.imAjax({
 				method:'getRoomInfoList',
-				success:( data )=>{
-					this.roomInfoList=data ; this.$diff ;   
+				success:( data=[] )=>{
+					let _data = JSON.parse((localStorage.roomInfoList||"[]"));
+
+					data.map(room=>{
+						// 单聊&&没人说话 , 默认隐藏 ;
+						if(!room.lastTalk && room.type=='0'){
+							room.hide = true ;
+						}
+						// 获取用户之前隐藏的房间 ;
+						_data.map(_room=>{
+							if(room.room_id==_room.room_id){
+								room.hide = _room.hide ;
+							}
+						})
+					})
+					this.roomInfoList=data ; this.$diff ;
+					// 保存操作 ;
+					localStorage.roomInfoList = JSON.stringify( this.$root.roomInfoList||[] );   
 				}
 			})
 		},
 		// 所有人员
-		getAllPeople(){
+		getAllPeople( kw ){
 			App.imAjax({
 				method:'getAllPeople',
+				data:{
+					kw
+				},
 				success:( obj )=>{
 					this.allPeople=obj ; this.$diff ;
 				}
 			})
 		},
 		// 得到所有加入的组群
-		getGroupJoined(){
+		getGroupJoined( kw ){
 			App.imAjax({
 				method:'getGroupJoined',
+				data:{
+					kw
+				},
 				success:(obj)=>{
 					this.groupJoined=obj ; this.$diff ;
 				}
@@ -105,6 +127,16 @@ export default{
 				method:'talkToOne',
 				data:{
 					uid
+				},
+				success:yes
+			})
+		},
+		createGroup(room_name,parts_ids,yes){
+			App.imAjax({
+				method:'createGroup',
+				data:{
+					room_name,
+					parts_ids
 				},
 				success:yes
 			})

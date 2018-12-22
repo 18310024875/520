@@ -93,7 +93,7 @@
 				let ext = this.data.file_originname.split('.').pop().toLocaleLowerCase();
 				if( ext=='gif'||ext=='jepg'||ext=='jpg'||ext=='jpeg'||ext=='png' ){
 					return 'img'
-				}else if(ext=='mp4'){
+				}else if(ext=='mp4'||ext=='mov'||ext=='ogg'||ext=='webm'){
 					return 'mp4'
 				}else if(ext=='mp3'){
 					return 'mp3'

@@ -3,7 +3,6 @@
 		<div class="lp">
 			<div class="input-wrap">
 				<input 
-					style="background: red" 
 					class="input" type="" name="" 
 					:placeholder="this.placeholder||''" 
 					:value="this.value||''" 
@@ -14,13 +13,13 @@
 			<img src="assets/images/kaixin.png"/>
 			<label>
 				<img src="assets/images/tianjia.png"/>
-				<g_upload 
+				<upload 
 					style="display:none;" 
 					:action="this.action"
 					:name="this.name"
 					:success="this.success.bind(this)"
 					:error="this.error.bind(this)"
-				></g_upload>
+				></upload>
 			</label>
 		</div>
 	</div>
@@ -33,7 +32,11 @@
 		upload
 	*/
 	import config from 'src/config';
+	import upload from 'components/common/upload';
 	export default{
+		components:{
+			upload
+		},
 		data(){
 			return {
 				action:`${config.uploadHost}/file/upload?uid=${this.$root.userInfo.uid}`,
@@ -53,7 +56,6 @@
 			},
 			keydown(e){
 				if( e.keyCode==13 ){
-					alert(e.target.value)
 					this.enter && this.enter( e.target.value );
 				}
 			}

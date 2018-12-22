@@ -18,12 +18,16 @@ var src = path.join(__dirname,'..');
 
 // 全局 解决跨域
 app.all('*', function(req, res, next) {
-	console.log( req.headers.origin )
-	!req.headers.origin ? res.setHeader("Access-Control-Allow-Origin","*") : res.setHeader("Access-Control-Allow-Origin", req.headers.origin );
+	if( !req.headers.origin ){
+		res.setHeader("Access-Control-Allow-Origin","*");
+	}else{
+		res.setHeader("Access-Control-Allow-Origin", req.headers.origin );
+	};
     
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers",     "X-Requested-With,Content-Type");
-    res.setHeader("Access-Control-Allow-Methods",     "PUT,POST,GET,DELETE,OPTIONS");
+	res.setHeader("Access-Control-Allow-Methods",     "PUT,POST,GET,DELETE,OPTIONS");
+	
     next();
 });
 

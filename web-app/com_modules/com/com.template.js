@@ -286,7 +286,7 @@ var t = {};
 			else{
 				var match = each.match(/(.*)=["](.*)["]/);
 			    var key   = match[1];
-			    var value = match[2].trim();
+			    var value = match[2];
 			    if( key=='static_text' ){
 			    	S['text'] = value ;
 			    }else if( key=='class' ){
@@ -367,7 +367,7 @@ var t = {};
 							'tagName: "VIF_BEGIN",'+
 							'data_static: '+t.STR_STATIC( {} )+','+
 							'data_v: '+t.STR_V( {} )+','+
-							'children: '+D.vif.value+' ? ['+str+'] : [] '+
+							'children: ('+D.vif.value+') ? ['+str+'] : [] '+
 						'}';
 			};
 			if( D.vfor ){

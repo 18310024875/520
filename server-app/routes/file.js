@@ -8,6 +8,20 @@ function getTime(){
     return (new Date()).getTime()-500 + parseInt(Math.random(1)*1000) ;
 };
 
+// var fs = require('fs')
+// var ffmpeg = require('fluent-ffmpeg')
+// function isVideoNeedChange( pathname , callback ){
+//     let ext = file.originalname.split('.').pop();
+//     ffmpeg('xiaodu_1_6_8.mov')
+//     .format('mp4')
+//     .on('error', function(err) {
+//         console.log('An error occurred: ' + err.message);
+//     })
+//     .on('end', function() {
+//         console.log('Processing finished !');
+//     })
+//     .save('output.mp4');
+// }
 
 
 // 上传头像
@@ -18,12 +32,19 @@ router.post('/upload', (req, res, next)=>{
         let file = req.file ;
         if( file && uid ){
             let host = 'http://39.105.201.170:3000';
+            // 如果ext为mov则转换成mp3
+            if( file.originalname.split('.').pop().toLocaleLowerCase()=='mov' ){
+                let arr = file.originalname.split('.');
+                    arr.pop();
+                file.originname = arr.join('.')+'.pm4';
+            };
             // 暂存地址
             let tmp_path = file.path ;
             // 文件原名
             let originname = file.originalname ;
             // 拓展名
             let ext = file.originalname.split('.').pop();
+
             // 文件大小 
             let size = file.size ;
             // 创建时间

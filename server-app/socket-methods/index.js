@@ -170,14 +170,46 @@ SocketMethods.prototype={
 			})
 		}
 	},
+	// 通过sessionid获取用户
+	getUserInfoFromSessionUid(opt){
+		var $query = G.MYSQL.$query;
+		let socket = this.socket;
+		let session = socket.handshake.session;	
+
+		let uid = session.uid ;
+		$query(`SELECT * FROM user WHERE uid="${uid}"`, res=>{
+			this.snedImAjaxRes(opt,1,res[0]) ;
+		})
+	},
+	// 更新用户信息
+	setUserInfo(opt){
+		var $query = G.MYSQL.$query;
+		let socket = this.socket;
+		let session = socket.handshake.session;	
+		let data = opt.data ;
+
+		let uid = session.uid ;
+		let age = data.age||'' ;
+		let avatar = data.avatar||'';
+		let cname = data.cname||'';
+		let name = data.name||'';
+		let des = data.des||'';
+		let sex = data.sex||'';
+		$query(`UPDATE user SET age="${age}",avatar="${avatar}",cname="${cname}",name="${name}",des="${des}",sex="${sex}" WHERE uid="${uid}"`, res=>{
+				res ? this.snedImAjaxRes(opt, 1 ,'yes') : this.snedImAjaxRes(opt, 1 ,'no') ;
+		})
+	},
 
 	// 获取所有人员
 	getAllPeople(opt){
 		var $query = G.MYSQL.$query ;
 		let socket = this.socket ;
 		let session = socket.handshake.session ;
-		$query(`SELECT * FROM user`,res=>{
-			let wordObj = $common.parseArrayMakeWordObj(res,'cname');
+		let data = opt.data ;
+
+		let kw = data.kw ;
+		$query(`SELECT * FROM user ${kw?`WHERE cname LIKE "%${kw}%"`:''}`, mans=>{
+			let wordObj = $common.parseArrayMakeWordObj(mans,'cname');
 			this.snedImAjaxRes(opt,1, wordObj ) ;
 		})
 	},
@@ -186,15 +218,22 @@ SocketMethods.prototype={
 		var $query = G.MYSQL.$query;
 		let socket = this.socket;
 		let session = socket.handshake.session;
+		let data = opt.data ;
 
 		let uid = session.uid;
-		$query(`SELECT * FROM rooms WHERE type=1`, res => {
-			res = res.filter(v => {
-				let ids = $common.split_s(v.join_ids);
-				return ids.has(uid);
+		let kw = data.kw ;
+		$query(`
+		SELECT * FROM rooms
+		WHERE type=1 
+		${kw?`AND rooms.room_name LIKE "%${kw}%"`:''}
+		AND	(	rooms.join_ids LIKE "${uid},%" 
+			OR  rooms.join_ids LIKE "%,${uid}"
+			OR	rooms.join_ids LIKE "%,${uid},%"
+		)`, rooms => {
+			this.mapRoomsAddmanList(rooms,rooms2=>{
+				let wordObj = $common.parseArrayMakeWordObj(rooms2, 'room_name');
+				this.snedImAjaxRes(opt, 1, wordObj);
 			})
-			let wordObj = $common.parseArrayMakeWordObj(res, 'room_name');
-			this.snedImAjaxRes(opt, 1, wordObj);
 		})
 	},
 
@@ -323,13 +362,10 @@ SocketMethods.prototype={
 					user.name as creator_name, 
 					user.avatar as creator_avatar
 				FROM rooms 
-					JOIN user ON rooms.creator_id=user.uid `, 
-		res=>{
-			let myrooms = res.filter(room=>{
-			let join_ids = room.join_ids;
-			let ids_arr = $common.split_s(join_ids);
-				return ids_arr.has( uid );
-			})
+					JOIN user ON rooms.creator_id=user.uid 
+				WHERE 	rooms.join_ids LIKE "${uid},%" 
+					OR  rooms.join_ids LIKE "%,${uid}"
+					OR	rooms.join_ids LIKE "%,${uid},%"`, myrooms=>{
 			// 房间添加人员列表 ;
 			this.mapRoomsAddmanList(myrooms, myrooms2=>{
 				// 房间添加最后消息 ;
@@ -455,7 +491,41 @@ SocketMethods.prototype={
 				})
 			}
 		})
-	}
+	},
+	// 创建组群
+	createGroup(opt){
+		var $query = G.MYSQL.$query ;
+		let socket = this.socket ;
+		let session = socket.handshake.session ;
+		let data = opt.data ;
+
+		let uid = session.uid ;
+		let room_name = data.room_name ;
+		let parts_ids = data.parts_ids||'';
+		let ctime = $common.getTime();
+		let join_ids = uid+','+parts_ids ;
+		if(room_name&&parts_ids){
+			$query(`INSERT rooms (type,room_name,creator_id,join_ids,ctime) 
+					VALUES ("1","${room_name}","${uid}","${join_ids}","${ctime}")`, res=>{
+				this.snedImAjaxRes(opt, 1, res );
+	 		})
+		}
+	},
+	// 更新群组人员
+	updateRoomJoinids(opt){
+		var $query = G.MYSQL.$query ;
+		let socket = this.socket ;
+		let session = socket.handshake.session ;
+		let data = opt.data ;
+
+		let room_id = data.room_id ;
+		let join_ids = data.join_ids ;
+		if( room_id&&join_ids ){
+			$query(`UPDATE rooms SET join_ids="${join_ids}" WHERE room_id="${room_id}" AND type="1"`, res=>{
+				this.snedImAjaxRes(opt, 1, res );
+			})
+		}
+	},
 
 
 }

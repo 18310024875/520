@@ -190,7 +190,7 @@ Com.globalComponent('router-view',{
 		};
 	},
 	// 挂载实例之前 , 动态替换组件 ;
-	created:function(){
+	beforeMount:function(){
 		if( this.$parent.$opt.ROUTE ){
 
 			this.addInKeyContent();

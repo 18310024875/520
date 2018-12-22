@@ -1,14 +1,39 @@
 <template>
 	<div class="activeRoom">
+		<!-- 头 -->
 		<header class="mui-bar mui-bar-nav">
 			<a class="white mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<h1 class="white mui-title"> 
 				{{this.getRoomName()}}
 			</h1>
-			<div class="white fr mui-icon">
+			<div class="white fr mui-icon" v-if="this.roomDetail.type=='0'">
 				<span class="sp1"></span><span class="sp2"></span><span class="sp3"></span>
 			</div>
+			<div class="white fr mui-icon" v-if="this.roomDetail.type=='1'" @click="this.toggleMask">
+				<span style="font-size:16px;">人员+</span>
+			</div>
 		</header>
+		<!-- 人员浮层 -->
+		<ul class="mask-man-list" v-if="this.roomDetail.type=='1' && this.openMaskManList" @click="this.closeMask">
+			<li class="ava-wrap" v-for="(man,k) in this.roomDetail.manList">
+				<g_avatar 
+					style="display:inline-block;"
+					:radius="true"
+					:width=" 50+'px' "
+					:height=" 50+'px' "
+					:fontSize=" 20+'px' "
+					:avatar=" man.avatar " 
+					:name=" man.cname ">		
+				</g_avatar>			
+			</li>
+			<!-- 创建人有权限操作 -->
+			<li class="ava-wrap add" 
+				v-if="this.$root.userInfo.uid!=this.roomDetail.creator_id"
+				@click="this.updateMans">
+				<span class="mui-icon mui-icon-plus"></span>
+			</li>
+		</ul>
+		<!-- 谈话内容 -->
 		<div class="content">
 			<div class="content-list" ref="scroll">
 				<ul class="sm">
@@ -56,6 +81,8 @@
 				talkList:[],
 				// 输入值
 				value:'',
+				// 打开人员信息浮层
+				openMaskManList:false
 			}
 		},
 		
@@ -89,23 +116,31 @@
 				if( room_id ){
 					this.room_id = room_id ;
 					// 请求房间信息
-					this.$root.getRoomDetail(this.room_id,roomDetail=>{
-						this.roomDetail=roomDetail;
-						this.$diff ;
-					})
+					this.getRoomDetail();
 					// 请求列表 ;
-					this.$root.getTalkListFromRoomId( this.room_id , '' , talkList=>{
-						console.error( talkList )
-						this.talkList = talkList ; 
-						this.$diff ;
-
-						// 初始滚动最底层
-						let dom = this.$refs.scroll ;
-						dom.scrollTop = 9999 ;
-
-						this.init_scrollFn();
-					})
+					this.getTalkList();
 				}
+			},
+			// 请求房间信息
+			getRoomDetail(){
+				this.$root.getRoomDetail(this.room_id,roomDetail=>{
+					this.roomDetail=roomDetail;
+					this.$diff ;
+				})
+			},
+			// 请求列表 ;
+			getTalkList(){
+				this.$root.getTalkListFromRoomId( this.room_id , '' , talkList=>{
+					console.error( talkList )
+					this.talkList = talkList ; 
+					this.$diff ;
+
+					// 初始滚动最底层
+					let dom = this.$refs.scroll ;
+					dom.scrollTop = 9999 ;
+
+					this.init_scrollFn();
+				})
 			},
 			// 正确房间名
 			getRoomName(){
@@ -171,6 +206,32 @@
 				this.$root.sendMessageToRoom( this.room_id , '' , file.fid ,res=>{
 					
 				});
+			},
+			// 操作人员
+			updateMans(e){
+				e.stopPropagation();
+				let join_ids = this.roomDetail.manList.map(user=>user.uid).join(',');
+				this.$root.openSelectMan(join_ids, users=>{
+					let new_join_ids = users.map(user=>user.uid).join(',');
+					App.imAjax({
+						method:'updateRoomJoinids',
+						data:{
+							room_id: this.roomDetail.room_id ,
+							join_ids: new_join_ids
+						},
+						success:()=>{
+							this.getRoomDetail()
+						}
+					})
+				})
+			},
+			toggleMask(){
+				this.openMaskManList = !this.openMaskManList ;
+				this.$diff ;
+			},
+			closeMask(){
+				this.openMaskManList = false ;
+				this.$diff ;
 			}
 		}
 	}
@@ -180,6 +241,27 @@
 		position: absolute;
 		left: 0;right: 0;
 		top: 0;bottom: 0;
+		.mask-man-list{
+			position: fixed;
+			left: 0;top: 44px;bottom: 0;right: 0;
+			background: rgba(235,235,235,0.8);
+			z-index: 1;
+			overflow: auto;
+			padding-bottom: 20px;
+			.ava-wrap{
+				width: 16.6%;
+				float: left;
+				text-align: center;
+				font-size: 0;line-height: 0;
+				padding-top: 15px;
+			}
+			.ava-wrap.add{
+				.mui-icon{
+					font-size: 50px;
+					color: #999;
+				}
+			}
+		}
 		&>header{
 			background: #222;
 			color: white;

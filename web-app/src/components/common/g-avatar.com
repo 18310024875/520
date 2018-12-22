@@ -62,18 +62,25 @@
 			}
 		},
 
-		created(){
+		beforeMount(){
 			// 如果没传图片 或者 传递的图片为默认图片 , 直接显示文字头像 ;
 			if( this.isDefaultImg() ){
 				this.isError=true
 			}
 		},
 		mounted(){
-			this.__avatart = this.avatar ||false ;
+			this.__avatar = this.avatar ;
+		},
+		beforeUpdate(){
+			// 解决替换图片问题 ;;
+			if( this.__avatar != this.avatar ){
+				this.isError = false ;
+			}
 		},
 		updated(){
-			if( this.__avatart!= this.avatart ){
-				this.__avatart = this.avatar ;
+			// 解决替换图片问题 ;;
+			if( this.__avatar != this.avatar ){
+				this.__avatar  = this.avatar ;
 				try{
 					this.$refs.imgdiv.style.backgroundSize='cover';
 				}catch(e){}
@@ -140,7 +147,7 @@
 		}
 	}
 	.g-avatar.radius{
-		.g-avatar-img{
+		.g-avatar-img-div{
 			border-radius: 50%;
 		}
 		.g-avatar-name{

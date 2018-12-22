@@ -50,10 +50,16 @@ export default function( Com ){
 				this.$components[name] = Com.globalComponents[name];
 			}
 			// 生命周期 ;
-			this.created = opt.created || function(){}; //---可修改组件内部属性 ;
+			this.init = opt.init || function(){}; //(可修改组件内部属性) 
+			
+			this.beforeMount = opt.beforeMount||function(){}; //(可修改组件内部属性)
 			this.mounted = opt.mounted || function(){};
+
 			this.shouldUpdate = opt.shouldUpdate || function(){}; //---是否需要被动更新组件 ;
+			
+			this.beforeUpdate = opt.beforeUpdate || function(){}; 
 			this.updated = opt.updated || function(){};
+			
 			this.destroyed = opt.destroyed || function(){};
 
 			// render 函数绑定 this ;
@@ -104,6 +110,9 @@ export default function( Com ){
  				})
  			}(mName))
  		};
+
+ 		// init生命周期 ;
+		this.init();
 	};
 
 	// render解析成树 --- 解析vfor循环 ;
@@ -130,7 +139,7 @@ export default function( Com ){
 			};
 		}else{
 			// alert('不支持的便利格式-->'+listType);
-		}
+		};
 
 		return $_children ;
 	};
@@ -276,7 +285,6 @@ export default function( Com ){
 		} 
 	};
 
-
 	//********************************* 对比树 ********************************* ;;;
 	c.prototype.diffTree=function( $new_T , $new_parentTree , $old_T ){
 		// 循环引用 ; 处理特殊节点 ;
@@ -415,14 +423,14 @@ export default function( Com ){
 		// 挂载
 	c.prototype.$mount=function( el ){
 		var this_ = this ;
-
-		// created 生命周期 ;
-		this.created();
 		
 		// 获取el实例
 		this.$el = $.type(el)=='string' ? $.q(el) : el ;
 		// 查看是否挂载 
 		if(!this.$el){ alert('找不到挂载节点'); return };
+
+		// beforeMount生命周期
+		this.beforeMount();
 
 		// 生成一课树 ;
 		this.$tree = this.render() ;
@@ -447,6 +455,9 @@ export default function( Com ){
 		} else{
 			// 查看是否挂载
 			if(!this.$el){ alert('组件尚未挂载'); return };
+
+			// beforeUpdate生命周期
+			this.beforeUpdate();
 
 			// 新树和旧树 ;
 			var new_tree = this.render();

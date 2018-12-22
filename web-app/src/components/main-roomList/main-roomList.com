@@ -1,7 +1,16 @@
 <template>
 	<div class="main-roomList">
+		<div class="nodata" v-if="this.$root.roomInfoList.length==0">
+			<img src="assets/images/nodata.png"/>
+			<p>暂无数据...</p>
+		</div>
 
-		<div class="item-room longTap" v-for="(item,index) in this.$root.roomInfoList" @click="this.goActiveRoom(item.room_id)">
+		<div class="item-room tap"
+			v-if="this.$root.roomInfoList.length>0"
+			v-for="(item,index) in this.$root.roomInfoList" 
+			v-show=" !item.hide "
+			@longTap="this.longTap(item)" 
+			@tap="this.goActiveRoom(item)">
 			<div class="col1">
 				<div class="r-a-wrap">
 
@@ -14,6 +23,11 @@
 				<div class="laststr elli">{{ this.renderLastTalk(item) }}</div>
 				<div class="time">{{ this.renderLastTalkTime(item) }}</div>
 			</div>
+			<!-- 长按菜单 -->
+			<ul class="long-tap-menu" v-show="item.showMenu">
+				<li @tap="this.hideOneRoom(item)">删除</li>
+				<li @tap="this.hideMenu(item)">取消</li>
+			</ul>
 		</div>
 
 	</div>
@@ -21,14 +35,8 @@
 <script type="text/javascript">
 	
 	export default{
-		components:{
-
-		},
-
 		data(){
-			return {
-
-			}
+			return {}
 		},
 
 		mounted(){
@@ -36,9 +44,24 @@
 
 			this.$evtbus.off('messageRoom').on('messageRoom',(talk)=>{
 				try{
+					// 存在新消息的房间 , 取消用户之前的隐藏 ;
+					let _data = JSON.parse(localStorage.roomInfoList||"[]") ;
+					_data.map(_room=>{
+						if( talk.room_id == _room.room_id ){
+							delete _room.hide ;
+						}
+					});
+					// 保存操作 ;
+					localStorage.roomInfoList = JSON.stringify(_data);
+					// 请求接口 ;
 					this.$root.getRoomInfoList();
 				}catch(e){}
 			})	
+		},
+		destroyed(){
+			this.$root.roomInfoList.map( room=>{
+				room.showMenu = false ;
+			});
 		},
 
 		methods:{
@@ -79,9 +102,30 @@
 				let t = item.lastTalk && item.lastTalk.ctime;
 				return t?App.$tool.time(+t):''
 			},
-			goActiveRoom(room_id){
+			goActiveRoom(item){
+				console.log('goActiveRoom')
 				// 路由跳转 ;
-				location.hash = `/activeRoom?room_id=${room_id}`;
+				location.hash = `/activeRoom?room_id=${item.room_id}`;
+			},
+			// 长按显示更多操作
+			longTap(item,e){
+				this.$root.roomInfoList.map( room=>{
+					room.showMenu = false ;
+				})
+				item.showMenu = true ;
+				this.$diff ;
+			},
+			hideMenu(item,e){
+				e.stopPropagation();
+				item.showMenu = false ;
+				this.$diff ;
+			},
+			hideOneRoom(item,e){
+				e.stopPropagation();
+				item.hide = true ;
+				this.$diff ;
+				// 保存操作 ;
+				localStorage.roomInfoList = JSON.stringify( this.$root.roomInfoList||[] );
 			}
 		}
 	}
@@ -92,10 +136,40 @@
 		left: 0;right: 0;
 		top: 0;bottom: 0;
 		overflow: auto;
+		.nodata{
+			display: inline-block;
+			position: absolute;
+			left: 50%;top: 50%;
+			transform: translate(-50%,-60%);
+			p{
+				font-size: 15px;
+				color: #999;
+				text-align: center;
+				margin-top: 10px;
+			}
+		}
 		.item-room{
 			position: relative;
 			padding: 10px 12px;
 			border-bottom: 0.5px solid #ddd;
+			.long-tap-menu{
+				position: absolute;
+				top: 14px;
+				right: 15px;
+				background: white;
+				box-shadow: 0 0 10px rgba(0,0,0,0.3) ;
+				padding-right: 18px;
+				overflow: hidden;
+				border-radius: 5px;
+				li{
+					display: inline-block;
+					vertical-align: top;
+					color: #999;
+					font-size: 15px;
+					padding: 8px 0;
+					padding-left: 18px;
+				}
+			}
 			&::after{
 				content:'';
 				display: inline-block;
@@ -111,7 +185,6 @@
 			}
 			&>.col1{
 				.r-a-wrap{
-					background: red;
 					width: 55px;
 					height: 55px;
 					border-radius: 5px;
