@@ -36,7 +36,7 @@ router.post('/upload', (req, res, next)=>{
             if( file.originalname.split('.').pop().toLocaleLowerCase()=='mov' ){
                 let arr = file.originalname.split('.');
                     arr.pop();
-                file.originname = arr.join('.')+'.pm4';
+                file.originalname = arr.join('.')+'.mp4';
             };
             // 暂存地址
             let tmp_path = file.path ;
