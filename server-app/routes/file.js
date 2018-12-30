@@ -89,7 +89,7 @@ router.post('/upload', (req, res, next)=>{
         let len = files.length ;
         if( len ){
             for(let i=0 ; i<files.length ; i++){
-                let file = files[0];
+                let file = files[i];
                 handleOneFile(uid, file, __file=>{
                     arr.push(__file);
                     len--;

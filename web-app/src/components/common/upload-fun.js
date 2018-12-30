@@ -18,7 +18,7 @@ export default ( files=[] , yes , no )=>{
 	        xhr.onreadystatechange = ()=>{
 	            if( xhr.readyState == 4 ) {
 	            	if( xhr.status == 200){
-	            		yes && yes( xhr.responseText );
+	            		yes && yes( JSON.parse(xhr.responseText) );
 	            	}else{
 						no && no();
 	            	};
