@@ -11,52 +11,6 @@ import router from './router';
 
 // jq
 window.$ = require('jquery');
-
-
-// 发布订阅
-import eventproxy from 'eventproxy';
-var $evtbus = new eventproxy(); $evtbus.off = $evtbus.removeListener ;
-
-
-// 长按事件和点击事件 ;
-let click_mo , click_st , click_et , click_longTimer , click_allowed;
-document.body.addEventListener('touchstart',(e)=>{
-	if( $(e.target).closest('.tap').length ){
-		e.preventDefault();
-		// 重置默认值
-		click_allowed = true ;
-		click_mo = 1;
-		click_st = click_et = +(new Date()) ;
-		// 600秒后触发长按
-		click_longTimer = setTimeout(()=>{
-			click_allowed = false ;
-			$(e.target).trigger('longTap');
-		},600)
-	}
-},{ passive: false })
-document.body.addEventListener('touchmove',(e)=>{
-	if( $(e.target).closest('.tap').length ){
-		e.preventDefault();
-		++click_mo
-		if( click_mo%10==0 ){
-			clearTimeout(click_longTimer)
-			click_allowed = false ;
-		}		
-	}
-},{ passive: false })
-document.body.addEventListener('touchend',(e)=>{
-	if( $(e.target).closest('.tap').length ){
-		e.preventDefault();
-		if( click_allowed ){
-			clearTimeout(click_longTimer);
-			click_et = +(new Date()) ;
-			if(click_et-click_st<=600){
-				$(e.target).trigger('tap')
-			}
-		}		
-	}
-},{ passive: false })
-
 // 防止多次点击
 $('body').on('tap','.mui-btn',(e)=>{
 	setTimeout(()=>{
@@ -67,6 +21,9 @@ $('body').on('tap','.mui-btn',(e)=>{
 	},1000)
 })
 
+// 发布订阅
+import eventproxy from 'eventproxy';
+var $evtbus = new eventproxy(); $evtbus.off = $evtbus.removeListener ;
 
 // 工具
 import $tool from 'src/tool';
@@ -84,7 +41,7 @@ Com.globalComponent('g_avatar',g_avatar);
 Com.globalComponent('g_group_avatar',g_group_avatar);
 Com.globalComponent('g_room_avatar',g_room_avatar);
 
-// 跟组件 ;
+// 根组件 ;
 window.App = new Com({
 	...root,
 	router,
@@ -92,8 +49,7 @@ window.App = new Com({
 
 
 
+
 // http://39.105.201.170:3000/www/dist/index.html
-
-
 
 

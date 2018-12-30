@@ -6,7 +6,7 @@
 					class="input" type="" name="" 
 					:placeholder="this.placeholder||''" 
 					:value="this.value||''" 
-					@keydown="this.keydown"/>
+					@keydown="this.keydown.bind(this)"/>
 			</div>
 		</div>
 		<div class="rp">

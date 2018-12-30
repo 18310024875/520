@@ -17,7 +17,7 @@
 				background: 'url('+this.avatar+') no-repeat' ,
 				backgroundSize: 'cover'
 			}"></div>
-		<img v-if="!this.isError" class="g-avatar-img" :src="this.avatar" @error="this.imgError"/>
+		<img v-if="!this.isError" class="g-avatar-img" :src="this.avatar" @error="this.imgError.bind(this)"/>
 
 		<!-- 文字头像 -->
 		<div 
@@ -113,6 +113,8 @@
 			},
 		}
 	}
+
+
 </script>
 <style>
 	.g-avatar{

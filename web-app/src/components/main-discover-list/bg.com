@@ -13,16 +13,6 @@
 	
 	// props -> url
 	export default{
-		components:{
-
-		},
-
-		data(){
-			return {
-
-			}
-		},
-
 		mounted(){
 			this.__url = this.url ;
 		},
@@ -34,12 +24,9 @@
 					this.$refs.imgdiv.style.backgroundSize='cover';
 				}catch(e){}
 			}
-		},
-
-		methods:{
-
 		}
 	}
+	
 </script>
 <style lang="less">
 	.discover-bg{

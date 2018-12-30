@@ -486,7 +486,6 @@ export default function( Com ){
 		this.destroyed();
 	};	
 
-
 }
 
 

@@ -11,17 +11,17 @@
 					<div class="mui-input-row">
 						<label>账号</label>
 						<input id='account' type="text" class="mui-input-clear mui-input" placeholder="请输入账号" 
-							:value="this.login_account" @input="this.input('login_account')" />
+							:value="this.login_account" @input="this.input.bind(this,'login_account')" />
 					</div>
 					<div class="mui-input-row">
 						<label>密码</label>
 						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" 
-							:value="this.login_password" @input="this.input('login_password')"/>
+							:value="this.login_password" @input="this.input.bind(this,'login_password')"/>
 					</div>
 				</form>
 				<div class="mui-content-padded">
-					<button class="mui-btn mui-btn-block mui-btn-primary" @click="this.login_submit">登录</button>
-					<div class="link-area" @click="this.goReg">
+					<button class="mui-btn mui-btn-block mui-btn-primary" @click="this.login_gologin.bind(this)">登录</button>
+					<div class="link-area" @click="this.goReg.bind(this)">
 						<a>注册账号</a>
 					</div>
 				</div>
@@ -39,23 +39,23 @@
 					<div class="mui-input-row">
 						<label>账号</label>
 						<input type="text" class="mui-input-clear mui-input" placeholder="请输入账号" 
-							:value="this.reg_account" @input="this.input('reg_account')"/>
+							:value="this.reg_account" @input="this.input.bind(this,'reg_account')"/>
 					</div>
 					<div class="mui-input-row">
 						<label>密码</label>
 						<input type="password" class="mui-input-clear mui-input" placeholder="请输入密码" 
-							:value="this.reg_password" @input="this.input('reg_password')"/>
+							:value="this.reg_password" @input="this.input.bind(this,'reg_password')"/>
 					</div>
 					<div class="mui-input-row">
 						<label>昵称</label>
 						<input type="text" class="mui-input-clear mui-input" placeholder="请输入昵称" 
-							:value="this.reg_cname" @input="this.input('reg_cname')"/>
+							:value="this.reg_cname" @input="this.input.bind(this,'reg_cname')"/>
 					</div>
 				</form>
 				<div class="mui-content-padded">
-					<button class="mui-btn mui-btn-block mui-btn-primary" @click="this.reg_submit">注册</button>
-					<div class="link-area" @click="this.goReg">
-						<a @click="this.goLogin">返回登录</a>
+					<button class="mui-btn mui-btn-block mui-btn-primary" @click="this.login_goreg.bind(this)">注册</button>
+					<div class="link-area" @click="this.goReg.bind(this)">
+						<a @click="this.goLogin.bind(this)">返回登录</a>
 					</div>
 				</div>
 				<div class="mui-content-padded oauth-area"></div>
@@ -103,11 +103,11 @@
 			input(type,e){
 				this[type]=e.target.value ; this.$diff ;
 			},
-			login_submit(){
+			login_gologin(){
 				if(this.login_account&&this.login_password){
 					App.imAjax({
 						next:true,
-						method:'login',
+						method:'login_gologin',
 						data:{
 							account: this.login_account ,
 							password: this.login_password
@@ -116,22 +116,19 @@
 							if( data && data[0] ){
 								mui.toast('登录成功');
 
-								this.loginOk( data[0] );
+								this.login_ok( data[0] );
 							}else{
 								mui.toast('账号或密码错误')
 							}
-						},
-						error:(e)=>{
-							mui.alert('获取用户信息失败')
 						}
 					})
 				}
 			},
-			reg_submit(){
+			login_goreg(){
 				if(this.reg_cname&&this.reg_account&&this.reg_password){
 					App.imAjax({
 						next:true,
-						method:'register',
+						method:'login_goreg',
 						data:{
 							cname: this.reg_cname ,	
 							account: this.reg_account ,
@@ -140,7 +137,7 @@
 						success:(data)=>{
 							mui.toast('注册成功');
 
-							this.loginOk( data[0] );
+							this.login_ok( data[0] );
 						}	
 					})
 				}

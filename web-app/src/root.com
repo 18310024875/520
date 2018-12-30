@@ -1,14 +1,14 @@
 <template>
 	
 	<div id="app">
-		<!-- 登录页面 -->
-		<login class="1-login" v-if="!this.userInfo" :loginOk="this.loginOk.bind(this)"></login>
-
 		<!-- 链接io浮层 -->
-		<div v-if="!this.socket_connect" class="connect-mask">
+		<div v-if=" !this.socket.connected " class="connect-mask">
 			<div class="rot_animate mui-sppin mui-icon mui-icon-spinner mui-spin"></div>
 			<p>正在链接网络...</p>
 		</div>
+
+		<!-- 登录页面 -->
+		<login class="1-login" v-if="!this.userInfo" :login_ok="this.login_ok.bind(this)"></login>
 
 		<!-- 路由容器 -->
 		<router-view class="1-router-view" v-if="this.userInfo"></router-view>
@@ -24,9 +24,6 @@
 
 	// window ;
 	const w = window ;
-
-	// 公用数据和方法 ;
-	import DATA_METHODS from './root-common-data-methods';
 
 	// 引入socket ;
 	import CONNECT_SOCKET from 'src/socket';
@@ -45,11 +42,8 @@
 
 		data(){
 			return {
-				// 公用im数据 ;
-				...DATA_METHODS.data ,
 				// 初始化相关
 				socket:'',
-				socket_connect:'',
 				userInfo:'',
 			}
 		},
@@ -60,21 +54,19 @@
 		},
 
 		methods:{
-			// 公用im方法 ;
-			... DATA_METHODS.methods ,
 			// 链接socket
 			initSocket(){
 				this.socket = CONNECT_SOCKET();
 				this.socket.on('connect',()=>{
-					this.socket_connect=true ; this.$diff ;
+					this.socket.connected=true  ; this.$diff ;
 					// 链接后 判断是否已经登录 ;
-					this.isLogin();
+					this.login_islogin();
 				})
 				this.socket.on('disconnect',()=>{
-					this.socket_connect=false ; this.$diff ;
+					this.socket.connected=true  ; this.$diff ;
 				})
 				this.socket.on('error',()=>{
-					this.socket_connect=false ; this.$diff ;
+					this.socket.connected=false ; this.$diff ;
 				})
 				this.socket.on('imMessage',(res)=>{
 					switch( res.type ){
@@ -116,20 +108,44 @@
 			GET_SOCKET_OK_imAjax( res={} ){
 				try{
 					if( res.fn ){
-						w[res.opt.fn_success]( res.data );
+						var data = res.data ;
+						try{
+							data = JSON.parse( JSON.stringify(data).replace(/"NULL"/g,'""') );
+						}catch(e){};
+						w[res.opt.fn_success]( data );
 						w[res.opt.fn_success]=null ;
 					}else{
 						mui.alert( res.data );
-						//w[res.opt.fn_error]( res.data );
+						w[res.opt.fn_error]( res.data );
 						w[res.opt.fn_error]=null ;
 					}
-				}catch(e){ console.log('eee->',e)}
+				}catch(e){ console.error('eee->',e)}
 			},
+			// 收到后台消息 --> 向一个房间广播信息 ;
+			GET_SOCKET_OK_messageRoom(content){
+				this.$evtbus.emit('messageRoom', content );
+			},
+			// 是否登录
+			login_islogin(){
+				this.imAjax({
+					next:true,
+					method:'login_islogin',
+					success:(data)=>{
+						data&&data[0] ? this.login_ok(data[0]) : null ;
+					}
+				})
+			},
+			// 登录成功 
+			login_ok(userInfo){
+				this.userInfo = userInfo ;
+				this.$diff ;
+			},
+
 			// 开启选人 
 			openSelectMan( ...val ){
 				let selectMan = this.$refs.selectMan.component ;
-					selectMan.open( ...val )
-			}
+				selectMan.open( ...val );
+			},
 		}
 	}
 </script>

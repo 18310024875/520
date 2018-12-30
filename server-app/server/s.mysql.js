@@ -11,16 +11,18 @@ var Client = new mariasql({
 })
 
 // 添加方法 ;
-Client.$query=function( sql , yes , no ){
+Client.$query=function( sql , yes , no , afterall){
 	console.log('sql语句-------- '+sql);
 
-	Client.query( sql , function(error , res , f){
+	Client.query( sql , function(error , result , f){
 		if(error){
 			console.log('mysql,error---'+error);
 			no ? no(error) : null ;
+			afterall ? afterall() : null ;
 		}else{
-			let _res = res instanceof Array ? res : +res.info.affectedRows ;
-			yes ? yes(_res) : null ;
+			let res = result instanceof Array ? result : !!result.info.affectedRows ;
+			yes ? yes(res) : null ;
+			afterall ? afterall() : null ;
 		}
 	});
 };

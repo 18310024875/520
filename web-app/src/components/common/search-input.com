@@ -6,11 +6,11 @@
 				<input 
 					class="input" 
 					:value="this.value||''" 
-					@keydown="this.keydown" 
-					@input="this.input"
-					@change="this.change"
-					@focus="this.focus" 
-					@blur="this.blur"/>
+					@keydown="this.keydown.bind(this)" 
+					@input="this.input.bind(this)"
+					@change="this.change.bind(this)"
+					@focus="this.focus.bind(this)" 
+					@blur="this.blur.bind(this)"/>
 				<div class="placeholder" v-show="this.showPlaceholder && !this.value">
 					<span class="mui-icon mui-icon-search sp1"></span><span class="sp2">{{this.placeholder||'搜索'}}</span>
 				</div>

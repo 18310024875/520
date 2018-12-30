@@ -17,7 +17,7 @@
 		</div>
 		<!-- 群 -->
 		<div class="type_1" v-if="this.data.type==1">
-			<groupAvatar :size="this.size" :fontSize="this.fontSize" :list="this.data.manList"></groupAvatar>
+			<groupAvatar :size="this.size" :fontSize="this.fontSize" :list="this.data.users"></groupAvatar>
 		</div>
 	</div>
 </template>
@@ -45,15 +45,15 @@
 		methods:{
 			taht_man(){
 				let uid = this.$root.userInfo.uid ;
-				let manList = this.data.manList ;
+				let users = this.data.users ;
 
-				let sender = manList.filter(man=>{
+				let sender = users.filter(man=>{
 					return man.uid != uid ;
 				})
 				if( sender.length==1 ){
 					return sender[0];
 				}else if(sender.length==0){
-					return manList[0];
+					return users[0];
 				}
 			}
 		}

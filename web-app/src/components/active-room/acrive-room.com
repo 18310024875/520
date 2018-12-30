@@ -1,5 +1,5 @@
 <template>
-	<div class="activeRoom">
+	<div class="active-room">
 		<!-- 头 -->
 		<header class="mui-bar mui-bar-nav">
 			<a class="white mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
@@ -237,7 +237,7 @@
 	}
 </script>
 <style lang="less">
-	.activeRoom{
+	.active-room{
 		position: absolute;
 		left: 0;right: 0;
 		top: 0;bottom: 0;

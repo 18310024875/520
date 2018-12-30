@@ -99,7 +99,7 @@ var t = {};
 
 		// 转译="..."内容     
 				// !!!!!!!! 内容中不能存在",会导致匹配出问题 ;
-			tpl=tpl.replace(/(\w+)="(.+?)"/g,function(E,a,b){ return a+'=\"'+encode_bd(b)+'\"'});
+			tpl=tpl.replace(/([\w\.-])="([^\"]+)"/g,function(E,a,b){ return a+'=\"'+encode_bd(b)+'\"'});
 
 		// 转译{{...}}内容 替换为标签
 				// !!!!!!!! 内容中存在的" 替换成' ;
@@ -109,7 +109,7 @@ var t = {};
 			tpl = tpl.replace( EXP_aloneTag ,function(E,a){ return a+'></over>' });
 
 		// 替换文本为标签
-			tpl = tpl.replace(/>\s*</g,'><');
+			tpl = tpl.replace(/>\s{1,}</g,'><');
 			tpl = tpl.replace(/>([^<>]+?)</g,function(E,a){
 				a = a.replace(/\s{1,}/g,' ').trim();
 				return '><TEXT static_text=\"'+a+'\"></TEXT><';
@@ -121,19 +121,7 @@ var t = {};
 				E=E.replace(/\s+:([\w\.-]+)=/g,function(E,a){ return ' v-bind:'+a+'='});
 				// 替换@为v-on
 				E=E.replace(/\s+@([\w\.-]+)=/g,function(E,a){ return ' v-on:'+a+'='});
-				// v-on:click="cliclFun" 替换成 v-on:click="cliclFun()"
-				E=E.replace(/(v-on:[\w\.-]+=\"(.+?))\"/g,function(E,a,b){ 
-					var str = b.indexOf('(')>-1?str=E:str=(a+'()\"') ;
-					return str.replace(/\s*/g,'');
-				});
-				// v-on:click="cliclFun()" 替换成 v-on:click="cliclFun(e)"
-				E=E.replace(/(v-on:[\w\.-]+=)\"(.+?)\"/g,function(E,a,b){ 
-					var match = b.match(/(.+)\((.*)\)/);
-					var k = match[1];
-					var v = match[2];
-						v ? v+=',evt' : v+='evt';
-					return a+'\"'+k+'('+v+')'+'\"';
-				});
+
 				return E ;
 			});
 		// 返回
@@ -205,9 +193,9 @@ var t = {};
 		var attributs = null ;
 		if( tag.indexOf('static_text')>-1){
 			// 静态字符内可能存在 " 影响匹配 ;
-			attributs = tag.match(/[^\s]+="(.*)"+/g)||[] ; 
+			attributs = tag.match(/[^\s]+="(.+)"/g)||[] ; 
 		}else{
-			attributs = tag.match(/[^\s]+="(.*?)"+/g)||[] ; 
+			attributs = tag.match(/[^\s]+="([^\"]+)"/g)||[] ; 
 		};
 
 		// 便利一个标签的所有属性 ;
@@ -215,11 +203,20 @@ var t = {};
 			// 处理v-for
 			 
 			if( each.indexOf('v-for=')>-1 ){
-				var match = each.match(/v-for="\s*\(\s*([\w-]+)\s*,\s*([\w-]+)\s*\)\s+in\s+([^"]+)\s*"/) ;
-				D['vfor']={
-					vfor_val: match[1],
-					vfor_key: match[2],
-					vfor_list: match[3]
+				var match = each.match(/v-for="\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s+in\s+([^"]+)\s*"/) ;
+				if( match ){
+					D['vfor']={
+						vfor_val: match[1],
+						vfor_key: match[2],
+						vfor_list: match[3]
+					}
+				}else{
+					match = each.match(/v-for="\s*(\w+)\s+in\s+([^"]+)\s*"/) || each.match(/v-for="\s*\(\s*(\w+)\s*\)\s+in\s+([^"]+)\s*"/);
+					D['vfor']={
+						vfor_val: match[1],
+						vfor_key: null ,
+						vfor_list: match[2]
+					}
 				}
 			}
 			// 处理v-if
@@ -235,7 +232,7 @@ var t = {};
 				var match = each.match(/v-on:(.+)=["](.*)["]/);
 			    var key   = match[1];
 			    var value = match[2].trim();
-			    D['von']['on'+key]='function(evt){'+value+'}';
+			    D['von']['on'+key]=value ;
 			}
 			// 处理v-show
 			else 
@@ -378,7 +375,7 @@ var t = {};
 							'tagName: "VFOR_BEGIN",'+
 							'data_static: '+t.STR_STATIC( {} )+','+
 							'data_v: '+t.STR_V( {} )+','+
-							'children: $_VFORLOOP('+list+',function('+v+','+k+'){'+
+							'children: $_VFORLOOP('+list+',function('+v+ (k?(','+k):'') +'){'+
 								' return '+str+';'+
 							'})'+
 						'}';

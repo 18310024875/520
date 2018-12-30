@@ -6,7 +6,7 @@
 			ref="input" 
 			type="file" 
 			enctype="multipart/form-data" 
-			@change="this.inputChange"/>
+			@change="this.inputChange.bind(this)"/>
 
 	</form>
 

@@ -21,6 +21,11 @@ module.exports = {
         return str.split(',').filter(v=>v);
     },
 
+
+    // 房间增加人员列表 ;
+    getRoomInfoList(){
+
+    }
     
 }
 

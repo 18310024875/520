@@ -5,9 +5,21 @@
 		
 		<!-- 底部 -->
 		<ul class="main-footer">
-			<li v-for="(item,k) in this.navList" class="li" @click="this.changeNav(item)" :class="{active: item.path==this.navActive }">
-				<div class="part1"><span :class="item.icon"></span></div>
-				<div class="part2">{{item.name}}</div>
+			<li v-for="item in this.navList" class="li" 
+				:class="{
+					active: item.path==this.navActive 
+				}"
+				@click="()=>{
+					this.navActive = item.path ;
+					this.$diff ;
+					location.hash = item.path ;
+				}">
+				<div class="part1">
+					<span :class="item.icon"></span>
+				</div>
+				<div class="part2">
+					{{item.name}}
+				</div>
 			</li>
 		</ul>
 	</div>
@@ -24,7 +36,7 @@
 				// 样式相关
 				navList:[
 					{icon:'mui-icon mui-icon-chatbubble',path:'/main/roomList',name:'微信'},
-					{icon:'mui-icon mui-icon-personadd',path:'/main/manList',name:'通讯录'},
+					{icon:'mui-icon mui-icon-personadd',path:'/main/addressBook/friends',name:'通讯录'},
 					{icon:'mui-icon mui-icon-navigate',path:'/main/discoverList',name:'发现'},
 					{icon:'mui-icon mui-icon-gear',path:'/main/mine',name:'设置'}
 				],
@@ -41,18 +53,13 @@
 			// 得到默认导航
 			getNavActive(){
 				this.navList.map(item=>{
-					if( location.href.indexOf(item.path)>-1 ){
+					let str = item.path.match(/main(\/\w+)/)[1];
+					if( location.href.indexOf( str )>-1 ){
 						this.navActive = item.path ;
 						this.$diff ;
 					}
 				})
-			},
-			// 导航切换
-			changeNav(item){
-				this.navActive = item.path ;
-				this.$diff ;
-				location.hash = item.path ;
-			},
+			}
 		}
 	}
 </script>

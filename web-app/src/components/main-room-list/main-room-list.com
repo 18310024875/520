@@ -1,16 +1,16 @@
 <template>
-	<div class="main-roomList">
-		<div class="nodata" v-if="this.$root.roomInfoList.length==0">
+	<div class="main-room-list">
+		<div class="nodata" 
+			v-if="this.roomInfoList.length==0">
 			<img src="assets/images/nodata.png"/>
 			<p>暂无数据...</p>
 		</div>
 
-		<div class="item-room tap"
-			v-if="this.$root.roomInfoList.length>0"
-			v-for="(item,index) in this.$root.roomInfoList" 
+		<div class="item-room"
+			v-if="this.roomInfoList.length>0"
+			v-for="(item) in this.roomInfoList" 
 			v-show=" !item.hide "
-			@longTap="this.longTap(item)" 
-			@tap="this.goActiveRoom(item)">
+			@click="this.goActiveRoom.bind(this.item)">
 			<div class="col1">
 				<div class="r-a-wrap">
 
@@ -25,8 +25,8 @@
 			</div>
 			<!-- 长按菜单 -->
 			<ul class="long-tap-menu" v-show="item.showMenu">
-				<li @tap="this.hideOneRoom(item)">删除</li>
-				<li @tap="this.hideMenu(item)">取消</li>
+				<li @click="this.hideOneRoom.bind(this,item)">删除</li>
+				<li @click="this.hideMenu.bind(this,item)">取消</li>
 			</ul>
 		</div>
 
@@ -36,44 +36,42 @@
 	
 	export default{
 		data(){
-			return {}
+			return {
+				roomInfoList:[]
+			}
 		},
 
 		mounted(){
-			this.$root.getRoomInfoList();
+			this.room_getRoomInfoList();
 
 			this.$evtbus.off('messageRoom').on('messageRoom',(talk)=>{
-				try{
-					// 存在新消息的房间 , 取消用户之前的隐藏 ;
-					let _data = JSON.parse(localStorage.roomInfoList||"[]") ;
-					_data.map(_room=>{
-						if( talk.room_id == _room.room_id ){
-							delete _room.hide ;
-						}
-					});
-					// 保存操作 ;
-					localStorage.roomInfoList = JSON.stringify(_data);
-					// 请求接口 ;
-					this.$root.getRoomInfoList();
-				}catch(e){}
-			})	
+				// 存在新消息的房间重新请求接口 ;
+				this.room_getRoomInfoList();
+			})
 		},
 		destroyed(){
-			this.$root.roomInfoList.map( room=>{
-				room.showMenu = false ;
-			});
+
 		},
 
 		methods:{
+			room_getRoomInfoList(){
+				App.imAjax({
+					method:'room_getRoomInfoList',
+					success:( data=[] )=>{
+						this.roomInfoList=data 
+						this.$diff ;  
+					}
+				})
+			},
 			renderName( item ){
 				let d = item ;
 				if(d.type=='1'){
-					return `群聊 : ${d.room_name}(${d.manList.length})` || '暂无房间名'
+					return `群聊 : ${d.room_name}(${d.users.length})`;
 				}else{
-					let manList = d.manList;
-					if( manList.length<=2 ){
+					let users = d.users;
+					if( users.length<=2 ){
 						let uid = this.$root.userInfo.uid ;
-						let sender = manList.filter((a,b)=>(a.uid!=uid));
+						let sender = users.filter((a,b)=>(a.uid!=uid));
 						if( sender.length==1 ){
 							return sender[0].cname
 						}else if(sender.length==0){
@@ -103,16 +101,20 @@
 				return t?App.$tool.time(+t):''
 			},
 			goActiveRoom(item){
-				console.log('goActiveRoom')
 				// 路由跳转 ;
 				location.hash = `/activeRoom?room_id=${item.room_id}`;
 			},
 			// 长按显示更多操作
 			longTap(item,e){
-				this.$root.roomInfoList.map( room=>{
+				this.roomInfoList.map( room=>{
 					room.showMenu = false ;
 				})
 				item.showMenu = true ;
+				this.$diff ;
+			},
+			hideOneRoom(item,e){
+				e.stopPropagation();
+				item.hide = true ;
 				this.$diff ;
 			},
 			hideMenu(item,e){
@@ -120,18 +122,11 @@
 				item.showMenu = false ;
 				this.$diff ;
 			},
-			hideOneRoom(item,e){
-				e.stopPropagation();
-				item.hide = true ;
-				this.$diff ;
-				// 保存操作 ;
-				localStorage.roomInfoList = JSON.stringify( this.$root.roomInfoList||[] );
-			}
 		}
 	}
 </script>
 <style lang="less">
-	.main-roomList{
+	.main-room-list{
 		position: absolute;
 		left: 0;right: 0;
 		top: 0;bottom: 0;

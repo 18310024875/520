@@ -1,14 +1,14 @@
 <template>
-	<div class="select-man" v-show="this.showDom" @click="this.close">
+	<div class="select-man" v-show="this.showDom" @click="this.close.bind(this)">
 		
-		<div class="select-man-content" @click="this.stop">
+		<div class="select-man-content" @click="this.stop.bind(this)">
 			<div class="part1">
 				<searchInput :value="this.kw" :onEnter="this.onEnter.bind(this)"></searchInput>
 			</div>
 			<ul class="part2" v-if="this.obj">
 				<li class="work-item" v-for="(item,key) in this.obj" v-if="item.length">
 					<p> {{key}} </p>
-					<div class="man-item p-row" v-for="(user,k) in item" @click="this.toggle(user)">
+					<div class="man-item p-row" v-for="(user,k) in item" @click="this.toggle.bind(this,user)">
 						<div class="col1">
 							<div class="ava-wrap">
 								<!-- <img src="assets/images/cpb.png"/> -->
@@ -33,8 +33,8 @@
 				</li>
 			</ul>
 			<div class="part3">
-				<div class="btn no" @click="this.close()">取消</div>
-				<div class="btn yes" @click="this.submit()">确定</div>
+				<div class="btn no" @click="this.close.bind(this)">取消</div>
+				<div class="btn yes" @click="this.submit.bind(this)">确定</div>
 			</div>
 		</div>
 		<div class="close">

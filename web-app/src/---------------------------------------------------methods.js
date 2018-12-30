@@ -41,14 +41,7 @@ export default{
 				}
 			})
 		},
-		// 登录成功
-		loginOk( userInfo ){
-			this.userInfo = userInfo ; this.$diff ;
-			// 登录成功后 第一次请求所有预制数据;
-			// this.getRoomInfoList();
-			// this.getAllPeople();
-			// this.getGroupJoined();
-		},
+
 
 		// 获取和我相关的房间 和房间最后一条消息 ;
 		getRoomInfoList(){
