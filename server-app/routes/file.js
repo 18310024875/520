@@ -61,7 +61,7 @@ function handleOneFile( uid , file , yes , no ){
             `INSERT file (originname,size,indexname,serverUrl,creator_id) 
             VALUES("${originname}","${size}","${indexname}","${serverUrl}","${uid}")`,
         res=>{
-            let info = res,info ;
+            let info = res.info ;
             let insertId = info.insertId ;
             G.MYSQL.$query(`SELECT * FROM file WHERE fid="${insertId}"`,files=>{
                 yes&&yes( files[0] )  

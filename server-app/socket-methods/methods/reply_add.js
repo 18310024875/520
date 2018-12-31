@@ -14,13 +14,14 @@ module.exports = function( opt ){
     let uid = session.uid ;
 
     let pid = data.pid ;
-    let accept_id = data.accept_id||'' ;
     let creator_id = uid ;
+    let accept_id = data.accept_id ;
     let text = data.text||'' ;
     let fids = data.fids||'' ;
     $query(`INSERT reply (pid,accept_id,creator_id,fids,text) 
-    VALUES("${pid}","${accept_id}","${creator_id}","${fids}","${text}")`, res=>{
-        debugger
+    VALUES("${pid}",${accept_id?`"$accept_id{}"`:`NULL`},"${creator_id}","${fids}","${text}")`, res=>{
         send( 1, '发送成功' );
+    },err=>{
+        send( 0 , err );
     })
 }

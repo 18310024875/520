@@ -3,7 +3,8 @@ import config from 'src/config';
 
 export default ( files=[] , yes , no )=>{
 	if( files.length==0 ){
-		yes&&yes([])
+		yes&&yes([]);
+		return ;
 	};
 
 	let uid = App.userInfo.uid ;
