@@ -7,7 +7,6 @@ module.exports = function( opt ){
     let session = socket.handshake.session ;
     let data = opt.data ;
 
-    let ctime = common.getTime();
     let send = (flag,res)=>{
         this.snedImAjaxRes(opt, flag,res);
     }

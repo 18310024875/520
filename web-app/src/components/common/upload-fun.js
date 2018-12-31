@@ -2,7 +2,11 @@
 import config from 'src/config';
 
 export default ( files=[] , yes , no )=>{
-	let uid = App.userInfo.uid
+	if( files.length==0 ){
+		yes&&yes([])
+	};
+
+	let uid = App.userInfo.uid ;
 	if( uid ){
 		let action = `${config.uploadHost}/file/upload?uid=${uid}`;
 				

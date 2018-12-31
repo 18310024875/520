@@ -45,8 +45,8 @@
 				</ul>
 			</div>
 			<div class="under">
-				<div class="btn no" @click="this.close.bind(this)">取消</div>
-				<div class="btn yes" @click="this.submit.bind(this)">确定</div>
+				<div class="btn no lazy" @click="this.no.bind(this)">取消</div>
+				<div class="btn yes lazy" @click="this.yes.bind(this)">确定</div>
 			</div>		
 		</div>
 
@@ -122,16 +122,32 @@
 				this.fileList.splice(i,1);
 				this.$diff ;
 			},
-			close(){
-				this.close && this.close();
+			no(){
+				this.close&&this.close();
 			},
-			submit(){
-				// 先上传文件
-				uploadFun( this.fileList , res=>{
-					console.log( res )
-				},err=>{
+			yes(){
+				if( this.text ){
+					// 先上传文件
+					uploadFun( this.fileList , res=>{
+						// ajax
+						App.imAjax({
+							method:"reply_add",
+							data:{
+								pid:0,
+								accept_id:'',
+								fids: (res.data||[]).map(file=>file.fid).join(),
+								text: this.text
+							},
+							success:res=>{
 
-				})
+							}
+						})
+					},err=>{},()=>{
+						this.close&&this.close();
+					})
+				}else{
+					mui.alert('请输入文字')
+				}
 			},
 		}
 	}

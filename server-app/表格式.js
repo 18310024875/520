@@ -8,23 +8,21 @@
   `discover_bg` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
   `name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `des` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sex` smallint(6) DEFAULT NULL,
+  `sex` tinyint(1) DEFAULT NULL,
   `age` tinyint(4) DEFAULT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`uid`),
-  UNIQUE KEY `account` (`account`),
-  UNIQUE KEY `ctime` (`ctime`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
-
+  UNIQUE KEY `account` (`account`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
 
 // 用户的所有朋友 ;
 | user_friends | CREATE TABLE `user_friends` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `creator_id` int(10) unsigned NOT NULL,
   `accept_id` int(10) unsigned NOT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `creator_id` (`creator_id`),
   KEY `accept_id` (`accept_id`)
@@ -35,14 +33,14 @@
 // 房间信息
 | rooms | CREATE TABLE `room` (
   `room_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` tinyint(1) unsigned DEFAULT '1',
   `creator_id` int(10) unsigned NOT NULL,
+  `type` tinyint(1) unsigned DEFAULT '1',
   `room_name` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `room_des` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`room_id`),
-  UNIQUE KEY `ctime` (`ctime`)
+  KEY `creator_id` (`creator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
 
 
@@ -52,8 +50,8 @@
     `room_id` int(10) unsigned NOT NULL,
     `uid` int(10) unsigned NOT NULL,
     `show` tinyint(1) DEFAULT '1',
-      `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-      `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+    `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (`id`),
     KEY `room_id` (`room_id`),
     KEY `uid` (`uid`)
@@ -63,57 +61,49 @@
 // 对话信息
 | talk  | CREATE TABLE `talk` (
   `talk_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `room_id` int(10) unsigned NOT NULL,
   `creator_id` int(10) unsigned NOT NULL,
-  `talk_content` text COLLATE utf8_unicode_ci,
-  `talk_fid` int(10) unsigned NOT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `room_id` int(10) unsigned NOT NULL,
+  `talk_fid` int(10) unsigned DEFAULT NULL,
+  `talk_content` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`talk_id`),
-  UNIQUE KEY `ctime` (`ctime`)
+  KEY `creator_id` (`creator_id`),
+  KEY `room_id` (`room_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
 
 
 // 评论
 | reply | CREATE TABLE `reply` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) DEFAULT '0',
+  `pid` int(10) DEFAULT 0,
   `accept_id` int(10) unsigned DEFAULT NULL,
   `creator_id` int(10) unsigned DEFAULT NULL,
-  `text` text COLLATE utf8_unicode_ci,
-  `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `fids` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `text` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `pid` (`pid`),
   KEY `accept_id` (`accept_id`),
   KEY `creator_id` (`creator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
-// 评论附件
-| reaply | CREATE TABLE `reply_files` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `reply_id` int(10) unsigned DEFAULT NULL,
-  `fid` int(10) unsigned DEFAULT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `reply_id` (`reply_id`),
-  KEY `fid` (`fid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
 
 
 // 文件信息 ;
-| file | CREATE TABLE `file` (
+| file  | CREATE TABLE `file` (
   `fid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `size` int(10) DEFAULT NULL,
+  `creator_id` int(10) unsigned NOT NULL,
+  `size` int(10) NOT NULL,
   `indexname` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
   `originname` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
-  `serverUrl` varchar(1000) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creator_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `ctime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `utime` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `serverUrl` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `ctime` timestamp NOT NULL DEFAULT current_timestamp(),
+  `utime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`fid`),
-  UNIQUE KEY `ctime` (`ctime`)
+  KEY `creator_id` (`creator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
+
 
 
 

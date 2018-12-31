@@ -58,10 +58,12 @@ function handleOneFile( uid , file , yes , no ){
     let W = fs.createWriteStream( dirUrl );
     W.on('finish',()=>{
         G.MYSQL.$query(
-            `INSERT file (originname,size,indexname,serverUrl,creator_id,ctime) 
-            VALUES("${originname}","${size}","${indexname}","${serverUrl}","${uid}","${ctime}")`,
-        data=>{
-            G.MYSQL.$query(`SELECT * FROM file WHERE ctime="${ctime}"`,files=>{
+            `INSERT file (originname,size,indexname,serverUrl,creator_id) 
+            VALUES("${originname}","${size}","${indexname}","${serverUrl}","${uid}")`,
+        res=>{
+            let info = res,info ;
+            let insertId = info.insertId ;
+            G.MYSQL.$query(`SELECT * FROM file WHERE fid="${insertId}"`,files=>{
                 yes&&yes( files[0] )  
             })
         },err=>{

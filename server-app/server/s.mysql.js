@@ -10,19 +10,21 @@ var Client = new mariasql({
 	db: 'chen'
 })
 
+
+
+
 // 添加方法 ;
-Client.$query=function( sql , yes , no , afterall){
-	console.log('sql语句-------- '+sql);
+Client.$query=function( sql , yes , no , after){
 
 	Client.query( sql , function(error , result , f){
 		if(error){
-			console.log('mysql,error---'+error);
-			no ? no(error) : null ;
-			afterall ? afterall() : null ;
+			console.error('mysql,error---'+error);
+
+			no&&no(error);
+			after&&after();
 		}else{
-			let res = result instanceof Array ? result : !!result.info.affectedRows ;
-			yes ? yes(res) : null ;
-			afterall ? afterall() : null ;
+			yes&&yes(result);
+			after&&after();
 		}
 	});
 };

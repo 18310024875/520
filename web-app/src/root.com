@@ -108,11 +108,7 @@
 			GET_SOCKET_OK_imAjax( res={} ){
 				try{
 					if( res.fn ){
-						var data = res.data ;
-						try{
-							data = JSON.parse( JSON.stringify(data).replace(/"NULL"/g,'""') );
-						}catch(e){};
-						w[res.opt.fn_success]( data );
+						w[res.opt.fn_success]( res.data );
 						w[res.opt.fn_success]=null ;
 					}else{
 						mui.alert( res.data );

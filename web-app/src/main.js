@@ -12,7 +12,7 @@ import router from './router';
 // jq
 window.$ = require('jquery');
 // 防止多次点击
-$('body').on('tap','.mui-btn',(e)=>{
+$('body').on('click','.mui-btn,.lazy',(e)=>{
 	setTimeout(()=>{
 		e.target.style.pointerEvents='none';
 	},100)

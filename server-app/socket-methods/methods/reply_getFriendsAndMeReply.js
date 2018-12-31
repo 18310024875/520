@@ -7,7 +7,6 @@ module.exports = function( opt ){
     let session = socket.handshake.session ;
     let data = opt.data ;
 
-    let ctime = common.getTime();
     let send = (flag,res)=>{
         this.snedImAjaxRes(opt, flag,res);
     }
@@ -16,43 +15,42 @@ module.exports = function( opt ){
 
     // 先找到所有的朋友 ;
     getFriends((friends)=>{
-        let str = friends.map( man=>` creator_id="${man.uid}" ` ).join(' OR ');
-        if( str ){
-            // 查找所有朋友一级发言(pid=0 && 不含回复 && 含有附件)
-            $query(`SELECT 
-                        reply.*,
-                        creator.cname as creator_cname,
-                        creator.avatar as creator_avatar,
-                        accept.cname as accept_cname,
-                        accept.avatar as accept_avatar
-                    FROM reply 
-                        LEFT JOIN user as creator
-                            ON reply.creator_id = creator.uid
-                        LEFT JOIN user as accept
-                            ON reply.accept_id = accept.uid
-                    WHERE pid="0" AND (${str}) 
-                        ${last_id?`AND reply.id<"${last_id}"`:''}
-                        ORDER BY reply.id DESC LIMIT 0,20`,
-            replyList=>{
-                let len = 2 ;
-                // 一级评论增加文件信息
-                mapReplyListAddFiles(replyList,replyList=>{
-                    len-- ;
-                    if( len==0 ){
-                        send(1,replyList)
-                    }
-                })  
-                // 一级评论下的二级评论( 最多十条 && 不含附件)      
-                mapReplyListAddChildren(replyList,replyList=>{
-                    len-- ;
-                    if( len==0 ){
-                        send(1,replyList)
-                    }
-                })
+        // 获取自己的和朋友的所有id ;
+        let arr = friends.map(man=>man.uid);
+            arr.push( uid );
+        let str = arr.map( uid=>` creator_id="${uid}" ` ).join(' OR ');
+        // 查找所有朋友一级发言(pid=0 && 不含回复 && 含有附件)
+        $query(`SELECT 
+                    reply.*,
+                    creator.cname as creator_cname,
+                    creator.avatar as creator_avatar,
+                    accept.cname as accept_cname,
+                    accept.avatar as accept_avatar
+                FROM reply 
+                    LEFT JOIN user as creator
+                        ON reply.creator_id = creator.uid
+                    LEFT JOIN user as accept
+                        ON reply.accept_id = accept.uid
+                WHERE pid="0" AND (${str}) 
+                    ${last_id?`AND reply.id<"${last_id}"`:''}
+                    ORDER BY reply.id DESC LIMIT 0,20`,
+        replyList=>{
+            let len = 2 ;
+            // 一级评论增加文件信息
+            mapReplyListAddFiles(replyList,replyList=>{
+                len-- ;
+                if( len==0 ){
+                    send(1,replyList)
+                }
+            })  
+            // 一级评论下的二级评论( 最多十条 && 不含附件)      
+            mapReplyListAddChildren(replyList,replyList=>{
+                len-- ;
+                if( len==0 ){
+                    send(1,replyList)
+                }
             })
-        }else{
-            send(0,[])
-        }
+        })
     })
 
     // 一级评论下的二级评论

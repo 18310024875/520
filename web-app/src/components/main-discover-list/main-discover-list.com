@@ -5,12 +5,20 @@
 			<div class="part1">
 				<bg :url=" this.$root.userInfo.discover_bg || 'assets/images/cpb.png' "/>
 				<div class="under">
-					<div class="fl" style="position:relative;top:-10px;margin-right:6px;">
+					<!-- 发动态 -->
+					<div 
+						class="fl" 
+						style="position:relative;top:-10px;margin-right:6px;"
+						@click="()=>{
+							this.showMask=true ; this.$diff ;
+						}">
 						<span class="mui-icon mui-icon-camera"></span>
 					</div>
+					<!-- 名字 -->
 					<div class="fl" style="position:relative;top:-10px;font-size:17px;margin-right:10px;">
 						{{this.$root.userInfo.cname}}
 					</div>
+					<!-- 头像 -->
 					<div class="fl">
 						<g_avatar 
 							class="ava"
@@ -23,7 +31,9 @@
 						</g_avatar>	
 					</div>
 				</div>
-				<div class="under2" @click="this.reload.bind(this)">
+				<!-- 刷新按钮 -->
+				<div class="under2" 
+					@click="this.reload.bind(this)">
 					<span class="mui-icon mui-icon-reload"></span>
 				</div>
 			</div>
@@ -31,10 +41,18 @@
 
 				<item v-for="(v,k) in this.list" :data="v"></item>
 
+				<div class="nodata" v-if="this.list.length==0">
+					<img src="assets/images/nodata.png"/>
+					<p>暂无数据...</p>
+				</div>
 			</div>
 		</div>
 		<!-- 谈话浮层 -->
-		<talkMask>
+		<talkMask 
+			v-if="this.showMask" 
+			:close="()=>{
+				this.showMask=false ; this.$diff ;
+			}">		
 		</talkMask>
 
 	</div>
@@ -53,8 +71,9 @@
 
 		data(){
 			return {
+				showMask:false,
 				last_id:0,
-				list:[1,2,3]
+				list:[]
 			}
 		},
 
@@ -72,7 +91,7 @@
 			},
 			getList( cb ){
 				App.imAjax({
-					method:"reply_getFriendsReply",
+					method:"reply_getFriendsAndMeReply",
 					data:{
 						last_id: this.last_id
 					},
@@ -125,6 +144,15 @@
 		left: 0;right: 0;
 		top: 0;bottom: 0;
 		overflow: hidden;
+		.nodata{
+			text-align: center;
+			p{
+				font-size: 15px;
+				color: #999;
+				text-align: center;
+				margin-top: 10px;
+			}
+		}
 		&>.scroll{
 			position: absolute;
 			left: 0;right: 0;
