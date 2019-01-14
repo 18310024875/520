@@ -10,7 +10,7 @@
 			v-if="this.roomInfoList.length>0"
 			v-for="(item) in this.roomInfoList" 
 			v-show=" !item.hide "
-			@click="this.goActiveRoom.bind(this.item)">
+			@click="this.goActiveRoom.bind(this,item)">
 			<div class="col1">
 				<div class="r-a-wrap">
 
@@ -65,9 +65,7 @@
 			},
 			renderName( item ){
 				let d = item ;
-				if(d.type=='1'){
-					return `群聊 : ${d.room_name}(${d.users.length})`;
-				}else{
+				if( d.connect_friends ){
 					let users = d.users;
 					if( users.length<=2 ){
 						let uid = this.$root.userInfo.uid ;
@@ -82,6 +80,8 @@
 					}else{
 						return '人员列表超过3人'
 					}
+				}else{
+					return `群聊 : ${d.room_name}(${d.users.length})`;
 				}				
 			},
 			renderLastTalk(item){
@@ -98,11 +98,11 @@
 			},
 			renderLastTalkTime(item){
 				let t = item.lastTalk && item.lastTalk.ctime;
-				return t?App.$tool.time(+t):''
+				return t?App.time(t):''
 			},
 			goActiveRoom(item){
 				// 路由跳转 ;
-				location.hash = `/activeRoom?room_id=${item.room_id}`;
+				location.hash = `/connectRoom?room_id=${item.room_id}`;
 			},
 			// 长按显示更多操作
 			longTap(item,e){

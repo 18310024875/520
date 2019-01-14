@@ -12,7 +12,7 @@ module.exports = function( opt ){
     }
     let uid = session.uid ;
     let last_id = data.last_id ;
-
+    let id = data.id ;
     // 先找到所有的朋友 ;
     getFriends((friends)=>{
         // 获取自己的和朋友的所有id ;
@@ -31,8 +31,11 @@ module.exports = function( opt ){
                         ON reply.creator_id = creator.uid
                     LEFT JOIN user as accept
                         ON reply.accept_id = accept.uid
-                WHERE pid="0" AND (${str}) 
+                WHERE 
+                    reply.pid IS NULL
+                    AND (${str}) 
                     ${last_id?`AND reply.id<"${last_id}"`:''}
+                    ${id?`AND id="${id}"`:''}
                     ORDER BY reply.id DESC LIMIT 0,20`,
         replyList=>{
             let len = 2 ;
@@ -71,7 +74,7 @@ module.exports = function( opt ){
                             LEFT JOIN user as accept
                                 ON reply.accept_id = accept.uid
                         WHERE reply.pid="${reply_id}" 
-                            LIMIT 11`, 
+                            LIMIT 100`, 
                 res=>{
                     reply.children = res ;
                 },err=>{},()=>{
@@ -88,16 +91,14 @@ module.exports = function( opt ){
 
     // 便利会话列表 添加文件信息(一对多)
     function mapReplyListAddFiles(replyList,cb){
-        let len =replyList.length ;
+        // 不含fids不添加 ;
+        let arr = replyList.filter(reply=>reply.fids);
+        let len =arr.length ;
         if( len>0 ){
-            replyList.map( reply=>{
-                let reply_id = reply.id ;
-                $query(`SELECT 
-                            file.* 
-                            FROM reply_files
-                                LEFT JOIN file
-                                    ON reply_files.fid=file.fid
-                        WHERE reply_id="${reply_id}"`, 
+            arr.map( reply=>{
+                let fids = reply.fids||'';
+                let str = fids.split(',').filter(v=>v).map(v=>`fid="${v}"`).join(` OR `);
+                $query(`SELECT * FROM file WHERE ${str}`, 
                 files=>{
                     reply.files = files ;
                 },err=>{},()=>{
@@ -121,7 +122,7 @@ module.exports = function( opt ){
                     FROM user_friends 
                         LEFT JOIN user
                             ON user_friends.accept_id=user.uid
-                WHERE creator_id="${uid}"`, res=>{
+                WHERE creator_id="${uid}" AND user_friends.agree="1"`, res=>{
             arr = arr.concat( res );
         },err=>{},()=>{
             len--;
@@ -134,7 +135,7 @@ module.exports = function( opt ){
                     FROM user_friends 
                         LEFT JOIN user
                             ON user_friends.creator_id=user.uid
-                WHERE accept_id="${uid}"`, res=>{
+                WHERE accept_id="${uid}" AND user_friends.agree="1"`, res=>{
             arr = arr.concat( res );     
         },err=>{},()=>{
             len--;
@@ -144,3 +145,5 @@ module.exports = function( opt ){
         })
     }
 }
+
+

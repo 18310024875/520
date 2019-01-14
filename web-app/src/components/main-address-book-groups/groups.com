@@ -2,7 +2,7 @@
 	<ul class="mab-groups">
 		<li class="work-item" v-for="(item,key) in this.listobj" v-if="item.length">
 			<p> {{key}} </p>
-			<div class="man-item p-row" v-for="(v,k) in item">
+			<div class="man-item p-row" v-for="(v,k) in item" @click=" this.goConnectRoom.bind(this, v ) ">
 				<div class="col1">
 					<div class="ava-wrap">
 						<!-- <img src="assets/images/cpb.png"/> -->
@@ -34,7 +34,9 @@
 			}
 		},
 		methods:{
-
+			goConnectRoom( room ){
+				location.hash = '#/connectRoom?room_id='+room.room_id ;
+			}
 		}
 	}
 </script>

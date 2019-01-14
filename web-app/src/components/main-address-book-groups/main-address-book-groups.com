@@ -20,7 +20,7 @@
 						<span class="mui-icon mui-icon-home ic1"></span>
 					</div>
 				</div>
-				<div class="col2" @click="this.createGroup.bind(this)">
+				<div class="col2" @click="this.group_create.bind(this)">
 					<span class="name">创建群聊</span>
 				</div>
 			</div>
@@ -78,8 +78,25 @@
 					}
 				})
 			},
-			createGroup(){
-
+			group_create(){
+				this.$root.openSelectMan( '' , list=>{
+					if( list.length>=1 ){
+						mui.prompt('请输入房间名称','','',['取消','确定'],(data)=>{
+							if( data.index==1 && data.value.trim() ){
+								App.imAjax({
+									method: 'group_create',
+									data:{
+										name: data.value.trim() ,
+										ids: list.map(v=>v.uid).join()
+									},
+									success: res=>{
+										this.getList();
+									}
+								})
+							}
+						})
+					}
+				})
 			}
 		}
 	}

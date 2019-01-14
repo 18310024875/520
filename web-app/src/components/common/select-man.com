@@ -10,7 +10,12 @@
 					<p> {{key}} </p>
 					<div class="man-item p-row" v-for="(user,k) in item" @click="this.toggle.bind(this,user)">
 						<div class="col1">
-							<div class="ava-wrap">
+							<div class="ava-wrap" 
+								 @click="(e)=>{
+								 	e.stopPropagation();
+								 	this.close();
+								 	location.hash=`#/userDetail?uid=${user.uid}`
+								 }">
 								<!-- <img src="assets/images/cpb.png"/> -->
 								<g_avatar 
 									:radius="false"
@@ -88,18 +93,25 @@
 			},
 			getList(){
 				App.imAjax({
-					method:'getAllPeople',
+					method:'people_getAll',
 					data:{
 						kw: this.kw
 					},
 					success: obj=>{
 						let jids = this.join_ids.split(',').filter(v=>v);
 						for(let k in obj){
-							obj[k].map(user=>{
+							let users = obj[k]||[];
+							for(let i =0 ; i<users.length ; i++ ){
+								let user = users[i];
+								if( this.$root.userInfo.uid==user.uid ){
+									users.splice(i,1);
+									i--
+									break;
+								};
 								jids.map(uid=>{
 									uid==user.uid ? user.checked=true : null ;
-								})
-							})
+								});
+							}
 						};
 						this.obj = obj ;
 						this.$diff ;

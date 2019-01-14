@@ -44,7 +44,14 @@
 			return {
 				// 初始化相关
 				socket:'',
+				// 用户信息
 				userInfo:'',
+				// 未读消息
+				unread:{
+					list1:[],
+					list2:[],
+					list3:[]
+				},
 			}
 		},
 
@@ -54,6 +61,15 @@
 		},
 
 		methods:{
+			time( str ){
+				if( str.indexOf(":")>-1 ){
+					let arr = str.split(":");
+					arr.pop();
+					return arr.join(":");
+				}else{
+					return str ;
+				}
+			},
 			// 链接socket
 			initSocket(){
 				this.socket = CONNECT_SOCKET();
@@ -135,6 +151,8 @@
 			login_ok(userInfo){
 				this.userInfo = userInfo ;
 				this.$diff ;
+				// 获取未读信息
+				this.getUnreadAll();
 			},
 
 			// 开启选人 
@@ -142,6 +160,30 @@
 				let selectMan = this.$refs.selectMan.component ;
 				selectMan.open( ...val );
 			},
+			// 获取未读信息
+			getUnreadAll(){
+				this.imAjax({
+					method:'user_friends_notic',
+					success: res=>{
+						this.unread.list2 = res ;
+						this.$diff ;
+					}
+				})
+
+				this.imAjax({
+					method:'reply_read_listNotic',
+					data:{
+						readed: 0
+					},
+					success: res=>{
+						this.unread.list3 = res ;
+						this.$diff ;
+					}
+				})
+
+
+			},
+
 		}
 	}
 </script>

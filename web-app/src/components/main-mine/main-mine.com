@@ -15,13 +15,7 @@
 							:avatar=" this.data.avatar " 
 							:name=" this.data.cname ">		
 						</g_avatar>	
-						<upload 
-							style="display:none;" 
-							:action="this.action"
-							:name="this.name"
-							:success="this.success.bind(this)"
-							:error="this.error.bind(this)"
-						></upload>					
+				
 					</label>
 				</div>
 				<div class="col2">
@@ -33,23 +27,23 @@
 				<input type="text" placeholder="请输入昵称" 
 					   v-if=" this.edit? true : this.data.cname "
 					   :value="this.data.cname"
-					   @input="this.set('cname')"/>
+					   @input="this.set.bind(this,'cname')"/>
 			</div>
 			<div class="mui-input-row">
 				<label>姓名</label>
 				<input type="text" placeholder="请出入姓名" 
 					   v-if=" this.edit? true : this.data.name "
 					   :value="this.data.name"
-					   @input="this.set('name')"/>
+					   @input="this.set.bind(this,'name')"/>
 				<span class="mui-icon mui-icon-clear mui-hidden"></span>
 			</div>
 			<div class="mui-input-row">
 				<label>性别</label>
 				<div class="nn">
-					<div class="n nan" @click="this.set('sex','1')">
+					<div class="n nan" @click="this.set.bind(this,'sex','1')">
 						<span class="sp1" :class="{active: this.data.sex==1}"></span><span class="sp2">男</span>
 					</div>
-					<div class="n nv" @click="this.set('sex','2')">
+					<div class="n nv" @click="this.set.bind(this,'sex','2')">
 						<span class="sp1" :class="{active: this.data.sex==2}"></span><span class="sp2">女</span>
 					</div>
 				</div>
@@ -60,7 +54,7 @@
 					   v-if=" this.edit? true : this.data.age "
 					   :value="this.data.age"
 					   maxlength="2" 
-					   @input="this.set('age')"/>
+					   @input="this.set.bind(this,'age')"/>
 				<span class="mui-icon mui-icon-clear mui-hidden"></span>
 			</div>
 			<div class="mui-input-row">
@@ -68,26 +62,26 @@
 				<input type="text" placeholder="请输入自我介绍" 
 					   v-if=" this.edit? true : this.data.des "
 					   :value="this.data.des"
-					   @input="this.set('des')"/>
+					   @input="this.set.bind(this,'des')"/>
 				<span class="mui-icon mui-icon-clear mui-hidden"></span>
 			</div>
 
 			<div class="mui-button-row" v-if="!this.edit" style="padding-top:15px">
-				<button type="button" class="mui-btn mui-btn-primary" @click="this.editFn(true)">修改</button>
+				<button type="button" class="mui-btn mui-btn-primary" @click="this.editFn.bind(this,true)">修改</button>
 			</div>			
 			<div class="mui-button-row" v-if="this.edit"  style="padding-top:15px">
-				<button type="button" class="mui-btn mui-btn-primary" @click="this.submit" style="margin-right:7px">确认</button>
-				<button type="button" class="mui-btn mui-btn-danger"  @click="this.editFn(false)">取消</button>
+				<button type="button" class="mui-btn mui-btn-primary" @click="this.submit.bind(this)" style="margin-right:7px">确认</button>
+				<button type="button" class="mui-btn mui-btn-danger"  @click="this.editFn.bind(this,false)">取消</button>
 			</div>
 		</form>
 	</div>
 </template>
 <script type="text/javascript">
+
 	import config from 'src/config';
-	import upload from 'components/common/upload';
 	export default{
 		components:{
-			upload
+			
 		},
 
 		data(){
@@ -153,6 +147,172 @@
 			}
 		}
 	}
+
+
+
+
+	var obj = {
+		name:'123',
+		fn(){
+			console.log( this )
+			return function(){
+				console.log( this )
+			}
+		}
+	}
+
+	var obj2 = {
+		name:'222'
+	}
+
+
+	Function.prototype.bd=function(){
+		var method = this ;
+		var args = Array.prototype.slice.call(arguments)
+		return function(){
+			var taht = args[0];
+			var arr = args.slice(1)
+			method.apply( taht , arr )
+		}
+	}
+
+
+
+	var p = new Promise((resolve,reject)=>{
+		resolve(123)
+	})
+	.then((val)=>{
+		console.log(1,val);
+		return ++val ;
+	})
+	.then((val)=>{
+		console.log(2,val)
+		return ++val ;
+	})
+	.then((val)=>{
+		console.log(2,val)
+		return ++val ;
+	}).then((res)=>{
+		console.log( res )
+	})
+
+
+	var p = new Promise((resolve,reject)=>{
+		reject(1)
+	})
+
+	var sync1 = function(){
+		return new Promise((resolve,reject)=>{
+			setTimeout(()=>{
+				resolve(1)
+			},1000)
+		})
+	}
+
+	var sync2 = function(){
+		return new Promise((resolve,reject)=>{
+			setTimeout(()=>{
+				reject(2)
+			},2000)
+		})
+	}
+
+	var sync3 = function(){
+		return new Promise((resolve,reject)=>{
+			setTimeout(()=>{
+				resolve(3)
+			},3000)
+		})
+	}
+
+sync1()
+.then((val)=>{
+	console.log(val);
+	return sync2()
+})
+.then(val=>{
+	console.log(val);
+	return sync3();
+},e=>{
+	console.log('lll',e)
+})
+.then(val=>{
+	console.log(val)
+},e=>{
+	console.log('lll',e)
+})
+.catch(e=>{
+	console.error(e)
+});
+
+	var g = +new Date() ;
+	Promise.all([sync1(),sync2(),sync3()])
+	.then(res=>{
+		console.log( +new Date() - g)
+		console.log( res )
+	})
+
+
+
+var arr = [3,4,5,1,23,7];
+for(var i=0;i<arr.length-1;i++){
+	for(var j=0 ; j<arr.length-1-i ; j++ ) {
+		if(arr[j]>arr[j+1]){
+			[arr[j],arr[j+1]] = [arr[j+1],arr[j]]
+		}
+	}
+}
+
+
+
+
+var arr = [3,4,5,1,23,7];
+function sorter(arr){
+	console.log( arr )
+	if( !arr.length ){
+		return arr ;
+	};
+	let left=[];
+	let right=[];
+	let a = arr[0];
+	for(let i=1 ; i<arr.length ; i++){
+		if( arr[i]<a ){
+			left.push( arr[i] )
+		}else{
+			right.push( arr[i] )
+		}
+	}
+
+	return [].concat(sorter(left),[a],sorter(right))
+
+}
+
+window.onscroll=method(function(){
+
+},100,100)
+
+function method(method , delay , interval ){
+
+	let st , timer ;
+
+		st = +new Date();
+
+	return function(){
+
+		var that = this ;
+		var agms = Array.prototype.slice.call(arguments);
+		if(+new Date() - st >=interval){
+			st = +new Date();
+			method.apply(taht , arguments)
+		}else{
+			setTime(()=>{
+				method.apply(taht , arguments)
+			},delay)
+		}
+	}
+
+}
+	
 </script>
 <style lang="less">
 	.main-mine{

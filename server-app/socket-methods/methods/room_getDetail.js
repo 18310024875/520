@@ -10,27 +10,29 @@ module.exports = function( opt ){
     let send = (flag,res)=>{
         this.snedImAjaxRes(opt, flag,res);
     }
-
-    let uid = session.uid ;
-    let kw = data.kw ;
-
-    // 查询我参与的群 ;
-    $query(`SELECT 
-                room.*,
-                user.cname as creator_cname, 
-                user.avatar as creator_avatar
-            FROM room
-                LEFT JOIN user
-                    ON room.creator_id=user.uid 
-            WHERE room.connect_friends IS NULL
-                AND  room.room_id=( SELECT room_id FROM room_users WHERE uid="${uid}" )
-            ${kw?`AND room.room_name LIKE "%${kw}%"`:''}`, roomList=>{
-                mapRoomListAddUsers(roomList,roomList=>{
-                    let listobj = common.parseArrayMakeWordObj(roomList,'room_name');
-                    send( 1 , listobj )
-                })
-    })
     
+    let uid = session.uid ;
+
+    let room_id = data.room_id ;
+    if( room_id ){
+        $query(`
+            SELECT 
+                room.*,
+                user.cname as creator_cname,
+                user.avatar as creator_avatar
+            FROM 
+                room
+                LEFT JOIN user
+                    ON room.creator_id=user.uid
+                WHERE room_id="${room_id}"`, roomList=>{
+            mapRoomListAddUsers( roomList , roomList=>{
+                send(1,roomList[0])
+            })
+        })
+    }else{
+        send(0,'error')
+    }
+
     function mapRoomListAddUsers( roomList=[], cb ){
         let len = roomList.length ;
         if( len>0 ){
@@ -56,3 +58,4 @@ module.exports = function( opt ){
     }
 
 }
+

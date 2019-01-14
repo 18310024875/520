@@ -16,31 +16,36 @@ module.exports = function( opt ){
     getCreatorAndAccept( list=>{
         let listobj = common.parseArrayMakeWordObj(list,'cname');
         send(1,listobj)
-    })
+    });
+    
     function getCreatorAndAccept(cb){
         let len = 2 ;
         let arr = [];
-        // 我添加别人为好友 
+        // 我添加别人为好友 && 别人同意 
         $query(`SELECT 
                     user.*
                         FROM user_friends
                             LEFT JOIN user 
                                 ON user_friends.accept_id=user.uid
-                WHERE user_friends.creator_id="${uid}" 
-                ${kw?`AND user.cname LIKE "%${kw}%"`:''}`, res=>{
+                WHERE 
+                    user_friends.agree="1"
+                    AND user_friends.creator_id="${uid}" 
+                    ${kw?`AND user.cname LIKE "%${kw}%"`:''}`, res=>{
             arr = arr.concat( res )
         },err=>{},()=>{
             len--;
             len==0 ? cb&&cb( arr ) : null ;
         }) 
-        // 别人添加我为好友
+        // 别人添加我为好友 && 我同意
         $query(`SELECT 
                     user.*
                         FROM user_friends
                             LEFT JOIN user 
                                 ON user_friends.creator_id=user.uid
-                WHERE user_friends.accept_id="${uid}"
-                ${kw?`AND user.cname LIKE "%${kw}%"`:''}`, res=>{
+                WHERE 
+                    user_friends.agree="1"
+                    AND user_friends.accept_id="${uid}"
+                    ${kw?`AND user.cname LIKE "%${kw}%"`:''}`, res=>{
             arr = arr.concat( res )
         },err=>{},()=>{
             len--;

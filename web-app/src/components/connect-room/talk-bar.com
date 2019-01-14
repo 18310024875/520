@@ -10,16 +10,15 @@
 			</div>
 		</div>
 		<div class="rp">
-			<img src="assets/images/kaixin.png"/>
 			<label>
 				<img src="assets/images/tianjia.png"/>
-				<upload 
-					style="display:none;" 
-					:action="this.action"
-					:name="this.name"
-					:success="this.success.bind(this)"
-					:error="this.error.bind(this)"
-				></upload>
+				<form ref="form">
+					<input 
+						style="display:none;" 
+						type="file" 
+						@change="this.addFile.bind(this)">
+					</input>
+				</form>
 			</label>
 		</div>
 	</div>
@@ -31,33 +30,37 @@
 		enter
 		upload
 	*/
-	import config from 'src/config';
-	import upload from 'components/common/upload';
+	import uploadFun from 'components/common/upload-fun';
 	export default{
-		components:{
-			upload
-		},
 		data(){
 			return {
-				action:`${config.uploadHost}/file/upload?uid=${this.$root.userInfo.uid}`,
-				name:'upload'
+
 			}
 		},
 		methods:{
-			success(res){
-				res = JSON.parse(res);
-				if( res.code==0 ){
-					// 上传成功后 , 广播文件
-					this.upload && this.upload( res.data );
-				}
-			},
-			error(){
-				mui.alert('上传失败')
-			},
 			keydown(e){
 				if( e.keyCode==13 ){
 					this.enter && this.enter( e.target.value );
 				}
+			},
+			addFile(e){
+				// 上传文件
+				uploadFun( [...e.target.files] , res=>{
+					if( res.code==0 ){
+						this.upload && this.upload( res.data[0] )
+					}else{
+						mui.alert('上传失败')
+					}
+
+					this.resetForm();
+				},err=>{
+					this.resetForm();
+				})
+			},
+			resetForm(){
+				try{
+					this.$refs.form.reset();
+				}catch(e){};
 			}
 		}
 	}
@@ -69,9 +72,9 @@
 		position: relative;
 		.lp{
 			position: absolute;
-			left: 0;top: 0;bottom: 0;right: 75px;
-			padding-top: 5px;
+			left: 0;top: 0;bottom: 0;right: 50px;
 			padding-left: 12px;
+			padding-top: 8px;
 			.input-wrap{
 				padding:4px 0 ;
 				position: relative;
@@ -92,13 +95,12 @@
 		.rp{
 			position: absolute;
 			top: 0;bottom: 0;right: 0;
-			width: 75px;
-			padding-top: 8px;
-			padding-left: 4px;
+			width: 50px;
+			text-align: center;
+			padding-top: 10px;
 			img{
 				width: 25px;
 				vertical-align: middle;
-				margin-left: 6px;
 			}
 		}
 	}

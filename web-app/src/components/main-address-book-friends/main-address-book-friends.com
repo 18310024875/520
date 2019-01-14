@@ -14,6 +14,37 @@
 		<!-- 人员相关信息 -->
 		<div class="part2">
 
+			<!-- 加我的人 -->
+			<ul class="notic">
+				<li class="man-item p-row" 
+					v-for="(v,k) in this.$root.unread.list2"
+					style="border-bottom:1px solid #ddd"
+					@click="this.viewUser.bind(this, v.uid)">
+					<div class="col1">
+						<div class="ava-wrap">
+							<g_avatar 
+								:radius="false"
+								:width="'44px'"
+								:height="'44px'"
+								:fontSize="'20px'"
+								:avatar="v.avatar" 
+								:name="v.cname ">		
+							</g_avatar>
+						</div>
+					</div>
+					<div class="col2">
+						<span class="name">{{v.cname}}</span>
+						<div class="agree yes" @click=" this.agree.bind(this, v.user_friends_id, true ) ">
+							接受
+						</div>
+						<div class="agree no" @click=" this.agree.bind(this, v.user_friends_id, false ) ">
+							拒绝
+						</div>
+					</div>
+				</li>
+			</ul>
+
+
 			<div class="p-row">
 				<div class="col1 part2-1">
 					<div class="ava-wrap">
@@ -68,9 +99,24 @@
 		},
 
 		methods:{
+			agree( user_friends_id , status ,e){
+				e.stopPropagation();
+
+				App.imAjax({
+					method:'user_friends_agree',
+					data:{
+						user_friends_id ,
+						status
+					},
+					success: res=>{
+						App.getUnreadAll();
+						this.getList();
+					}
+				})
+			},
 			getList(){
 				App.imAjax({
-					method:'user_getFriends',
+					method:'user_friends_myFriends',
 					data:{
 						kw: this.kw
 					},
@@ -80,10 +126,53 @@
 					}
 				})
 			},
+			viewUser( uid ){
+				location.hash=`#/userDetail?uid=${uid}`
+			},
 			// 添加好友 ;
 			addFriend(){
+				let ids = [] ;
+				for(let k in this.listobj){
+					let arr = this.listobj[k];
+					arr.map(v=>{
+						ids.push( +v.uid )
+					})
+				}
 
-			}
+				this.$root.openSelectMan( ids.join() , list=>{
+					let ids1 = ids ;
+					let ids2 = list.map( v=>+v.uid ) ;
+
+					let same = [];
+					let len = Math.min( ids1.length , ids2.length );
+					for(let i=0 ; i<len ; i++){
+						if( ids1.indexOf( ids2[i] )>-1 ){
+							same.push( ids2[i] )
+						}
+					}
+
+					let add_arr=[] ;
+					ids2.map( id=>{
+						same.indexOf(id)==-1 ? add_arr.push(id) : null ;
+					})
+					let del_arr=[] ;
+					ids1.map( id=>{
+						same.indexOf(id)==-1 ? del_arr.push(id) : null ;
+					})
+
+					App.imAjax({
+						method:'user_friends_handle',
+						data:{
+							add_ids: add_arr.join() ,
+							del_ids: del_arr.join()
+						},
+						success: res=>{
+							App.getUnreadAll();
+							this.getList();
+						}
+					})
+				})
+			}	
 		}
 	}
 </script>
@@ -93,6 +182,28 @@
 		left: 0;right: 0;
 		top: 0;bottom: 0;
 		overflow: auto;
+		.notic{
+			.man-item{
+				.agree{
+					width: 55px;height: 24px;line-height: 24px;
+					border-radius: 3px;
+					float: right;
+					text-align: center;
+					font-size: 13px;
+				}
+				.agree.yes{
+					background: #19be6b;
+					color: white;
+					margin-right: 15px;
+					margin-left: 10px;
+				}
+				.agree.no{
+					background: white;
+					color: #888;
+					border:1px solid #ededed;
+				}
+			}
+		}
 		.part1{
 
 		}

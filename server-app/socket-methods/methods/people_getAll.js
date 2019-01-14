@@ -11,10 +11,11 @@ module.exports = function( opt ){
         this.snedImAjaxRes(opt, flag,res);
     }
     
-    let uid = session.uid ;
 
+    let uid = session.uid ;
+    let kw = data.kw;
     
-    $query(``, res=>{
-        
+    $query(`SELECT * FROM user ${kw?`WHERE user.cname LIKE "%${kw}%"`:''}`, res=>{
+        send(1, common.parseArrayMakeWordObj(res ,'cname'))
     })
 }

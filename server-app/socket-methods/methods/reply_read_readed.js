@@ -1,3 +1,4 @@
+
 const common = require('../common');
 
 module.exports = function( opt ){
@@ -10,11 +11,10 @@ module.exports = function( opt ){
     let send = (flag,res)=>{
         this.snedImAjaxRes(opt, flag,res);
     }
-    
-    let uid = session.uid ;
 
-    
-    $query(``, res=>{
-        
+    let uid = session.uid ;
+    let id = data.id ;
+    $query(`UPDATE reply_read SET readed="1" WHERE reply_id="${id}" AND accept_id="${uid}"`, res=>{
+        send(1,'操作成功')
     })
 }

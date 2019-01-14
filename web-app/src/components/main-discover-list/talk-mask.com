@@ -1,71 +1,75 @@
 <template>
-	<div class="discover-talk-mask">
+	<div>
 
-		<div class="content">
-			<div class="scroll">
-				<div class="textarea-wrap">
-					<textarea 
-						class="textarea textcss" 
-						placeholder="请发表文字"
-						:value="this.text"
-						@input="this.textAreaSetValue.bind(this)"
-						ref="textarea">
-					</textarea>
-					<div 
-						class="div-textarea textcss"
-						ref="divTextarea">
-						{{this.text}}.
-					</div>
-				</div>
-
-				<ul v-if="this.allowUpload || 1" class="ul">
-					<li class="li" 
-						v-for="(file,index) in this.fileList">
-						<bg :url="file.base64"/>
-						<div class="del" @click="this.delFile.bind(this)">
-							<h1><span class="sp">-</span></h1>
+		<div class="discover-talk-mask" ref="mask">
+			<div class="content">
+				<div class="scroll">
+					<div class="textarea-wrap">
+						<textarea 
+							class="textarea textcss" 
+							placeholder="请发表文字"
+							maxlength="200" 
+							:value="this.text"
+							@input="this.textAreaSetValue.bind(this)"
+							ref="textarea">
+						</textarea>
+						<div 
+							class="div-textarea textcss"
+							ref="divTextarea">
+							{{this.text}}.
 						</div>
-					</li>
-					<li class="li">
-						<label>
-							<div class="addbtn">
-								<span class="mui-icon mui-icon-plusempty"></span>
+					</div>
+
+					<ul v-if="this.allowUpload" class="ul">
+						<li class="li" 
+							v-for="(file,index) in this.fileList">
+							<bg :url="file.base64"/>
+							<div class="del" @click="this.delFile.bind(this)">
+								<h1><span class="sp">-</span></h1>
 							</div>
-							<form ref="form">
-								<input 
-									style="display:none;" 
-									type="file" 
-									multiple="multiple"
-									accept="image/*" 
-									@change="this.addFile.bind(this)">
-								</input>
-							</form>
-						</label>
-					</li>
-				</ul>
+						</li>
+
+						<li class="li" v-show="this.fileList.length<9">
+							<label>
+								<div class="addbtn">
+									<span class="mui-icon mui-icon-plusempty"></span>
+								</div>
+								<form ref="form">
+									<input 
+										style="display:none;" 
+										type="file" 
+										multiple="multiple"
+										accept="image/*" 
+										@change="this.addFile.bind(this)">
+									</input>
+								</form>
+							</label>
+						</li>
+					</ul>
+				</div>
+				<div class="under">
+					<div class="btn no lazy" @click="this.no.bind(this)">取消</div>
+					<div class="btn yes lazy" @click="this.yes.bind(this)">确定</div>
+				</div>		
 			</div>
-			<div class="under">
-				<div class="btn no lazy" @click="this.no.bind(this)">取消</div>
-				<div class="btn yes lazy" @click="this.yes.bind(this)">确定</div>
-			</div>		
 		</div>
-
-
-
 
 	</div>
 </template>
 <script type="text/javascript">
 
-	import talkBar from 'components/common/talk-bar.com';
-	import bg from './bg';
+	import bg from 'components/common/bg';
 	import uploadFun from 'components/common/upload-fun';
 	/*
-		allowUpload
+		props=>{
+			allowUpload
+			close
+			success
+			pid
+		}
 	*/
 	export default{
 		components:{
-			talkBar,
 			bg
 		},
 
@@ -76,6 +80,12 @@
 			}
 		},
 
+		mounted(){
+			document.body.appendChild( this.$refs.mask );
+		},
+		destroyed(){
+			document.body.removeChild( this.$refs.mask );
+		},
 
 		methods:{
 			// 监听textarea的输入 ;
@@ -86,8 +96,7 @@
 				this.$diff ; 
 
 				setTimeout(()=>{
-					console.log( divTextarea.offsetHeight )
-					console.log( divTextarea.innerHTML )
+					// textarea高度和div一致 ;;
 					textarea.style.height = divTextarea.offsetHeight+'px';
 				})
 			},
@@ -99,7 +108,7 @@
 					// 读取选中图片
 					this.fileRender(file, base64=>{
 						file.base64 = base64 ;
-						this.fileList.push( file ) ;
+						this.fileList.length<9 ? this.fileList.push( file ) : null ;
 						this.$diff ;
 					})
 				});
@@ -133,16 +142,17 @@
 						App.imAjax({
 							method:"reply_add",
 							data:{
-								pid:0,
-								accept_id:'',
+								pid: this.pid||'' ,
+								accept_id: this.accept_id||'' ,
 								fids: (res.data||[]).map(file=>file.fid).join(),
 								text: this.text
 							},
 							success:res=>{
-
+								this.success&&this.success();
+								this.close&&this.close();
 							}
 						})
-					},err=>{},()=>{
+					},err=>{
 						this.close&&this.close();
 					})
 				}else{
@@ -157,6 +167,7 @@
 		position: fixed;
 		left: 0;top: 0;right: 0;bottom: 0;
 		background: rgba(0,0,0,0.5);
+		z-index: 100;
 		&>.content{
 			position: absolute;
 			left: 30px;right: 30px;

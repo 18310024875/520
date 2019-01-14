@@ -5,7 +5,7 @@
 			height: (this.size||50)+'px' 
 		}">
 		<!-- 人 -->
-		<div class="type_0" v-if="this.data.type==0">
+		<div class="type_0" v-if=" this.data.connect_friends ">
 			<avatar 
 				:radius="false"
 				:width=" (this.size||50)+'px' "
@@ -16,7 +16,7 @@
 			</avatar>
 		</div>
 		<!-- 群 -->
-		<div class="type_1" v-if="this.data.type==1">
+		<div class="type_1" v-if=" !this.data.connect_friends ">
 			<groupAvatar :size="this.size" :fontSize="this.fontSize" :list="this.data.users"></groupAvatar>
 		</div>
 	</div>

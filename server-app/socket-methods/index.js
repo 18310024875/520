@@ -55,6 +55,14 @@ SocketMethods.prototype={
 	},
 };
 
+Array.prototype.has = function( k ){
+	for(let i=0 ; i<this.length ; i++){
+		if( this[i]==k ){
+			return true
+		}
+	}
+	return false
+}
 
 // 加载methods下的方法 ;
 var fs = require('fs');
@@ -72,34 +80,8 @@ module.exports = SocketMethods;
 
 
 
-// Array.prototype.has = function( k ){
-// 	for(let i=0 ; i<this.length ; i++){
-// 		if( this[i]==k ){
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
 
-// SocketMethods.prototype={
 
-// 	// 处理客户端发来的数据
-// 	imAjax( option ){
-// 		let socket = this.socket ;
-// 		let session = socket.handshake.session ;
-// 		if( option.next===true ){
-// 			// 不需要验证
-// 		}else{
-// 			// 需要验证
-// 			if( !session.uid ){
-// 				// 需要验证,不存在用户id 不执行方法 ;
-// 				this.snedImAjaxRes(option,0,'user 验证不通过');
-// 				return ;
-// 			}
-// 		}
-// 		// 调用方法 ;
-// 		this[ option.method ]&&this[ option.method ]( option );
-// 	},
 
 
 

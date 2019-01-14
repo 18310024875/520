@@ -4,7 +4,9 @@
 			v-for="(item,key) in this.listobj" 
 			v-if="item.length">
 			<p> {{key}} </p>
-			<div class="man-item p-row" v-for="(v,k) in item">
+			<div class="man-item p-row" 
+				 v-for="(v,k) in item"
+				 @click="this.viewUser.bind(this,v.uid)">
 				<div class="col1">
 					<div class="ava-wrap">
 						<g_avatar 
@@ -42,7 +44,9 @@
 			}
 		},
 		methods:{
-
+			viewUser( uid ){
+				location.hash=`#/userDetail?uid=${uid}`
+			},
 		}
 	}
 </script>

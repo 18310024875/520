@@ -30,7 +30,7 @@
 					<!-- 图片 -->
 					<div v-if="this.getFileType()=='img'" class="t-img"
 						 ref="img"
-						 @click="this.openWin"
+						 @click="this.openWin.bind(this)"
 						:style="{
 							background: 'url('+this.data.file_serverUrl+') no-repeat',
 							backgroundSize: 'cover'
@@ -49,7 +49,7 @@
 					</div>
 					<!-- 文件 -->
 					<div v-if="this.getFileType()=='file'" class="t-file"
-						 @click="this.openWin">
+						 @click="this.openWin.bind(this)">
 						<div class="tfl">
 							<img src="assets/images/icon_unknow.png"/>
 						</div>
@@ -95,7 +95,7 @@
 					return 'img'
 				}else if(ext=='mp4'||ext=='ogg'||ext=='webm'){
 					return 'mp4'
-				}else if(ext=='mp3'||'wav'){
+				}else if(ext=='mp3'||ext=='wav'){
 					return 'mp3'
 				}else{
 					return 'file'
@@ -106,7 +106,7 @@
 				return uid==this.data.creator_id ;
 			},
 			time(){
-				return this.$tool.friendlyTime( +this.data.ctime )
+				return this.$tool.friendlyTime( this.data.ctime )
 			},
 			openWin(){
 				window.open( this.data.file_serverUrl )

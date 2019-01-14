@@ -124,7 +124,40 @@ router.post('/upload', (req, res, next)=>{
 
 
 
+
+obj = {
+    id:'root',
+    children:[
+        {id:'1',children:[
+            {id:'1.1',children:[]},
+            {id:'1.2',children:[]},
+        ]},
+        {id:'2',children:[]},
+        {id:'3',children:[]},
+    ]
+}
+
+function find(id,obj){
+    var children = obj.children||[] ;
+    for(var k in children){
+        var each = children[k] ;
+        var res = find(id, each);
+       if( res ) {
+           return res ;
+       }
+    }
+
+    if(id==obj.id){ 
+        return obj ;
+    }else{
+        return false
+    }
+    console.log( obj )
+}
+
+
+
+
 module.exports = router;      
                 
                 
-               

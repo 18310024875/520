@@ -5,7 +5,8 @@
 		:style="{
 			background: 'url('+this.url+') no-repeat' ,
 			backgroundSize:'cover'
-		}">
+		}"
+		@click="this.openwin.bind(this)">
 		
 	</div>
 </template>
@@ -13,16 +14,26 @@
 	
 	// props -> url
 	export default{
+		
 		mounted(){
 			this.__url = this.url ;
 		},
+
 		updated(){
 			// 解决替换图片问题 ;;
 			if( this.__url != this.url ){
 				this.__url  = this.url ;
 				try{
+					// this.$refs.imgdiv.style.background=	`url("${this.url}") no-repeat`;
 					this.$refs.imgdiv.style.backgroundSize='cover';
 				}catch(e){}
+			}
+		},
+
+		methods:{
+			openwin(e){
+				e.stopPropagation();
+				window.open( this.url ,'_blank')
 			}
 		}
 	}
