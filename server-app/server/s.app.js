@@ -31,17 +31,15 @@ app.all('*', function(req, res, next) {
     next();
 });
 
-app.all('/ok', function(req, res, next) {
-	setTimeout(() => {
+app.all('/aa', function(req, res, next) {
+	setTime(() => {
 		res.send('1111')
-	},2000)
-	next()
+	},1000)
+	
 })
-app.all('/ok2', function(req, res, next) {
-	res.status(407)
-	// setTimeout(() => {
-		res.send('1111')
-	// },2000)
+app.all('/bb', function(req, res, next) {
+	res.status(406)
+	res.send('222')
 })
 
 // 初始化插件 ;
