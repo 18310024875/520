@@ -38,9 +38,9 @@ app.all('/ok', function(req, res, next) {
 })
 app.all('/ok2', function(req, res, next) {
 	res.status(407)
-	setTimeout(() => {
+	// setTimeout(() => {
 		res.send('1111')
-	},2000)
+	// },2000)
 })
 
 // 初始化插件 ;
