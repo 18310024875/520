@@ -32,7 +32,6 @@ app.all('*', function(req, res, next) {
 });
 
 app.all('/ok', function(req, res, next) {
-	res.status(406)
 	res.send('1111')
 })
 
