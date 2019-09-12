@@ -31,6 +31,10 @@ app.all('*', function(req, res, next) {
     next();
 });
 
+app.all('/ok', function(req, res, next) {
+	res.send('1111')
+})
+
 // 初始化插件 ;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
