@@ -32,7 +32,15 @@ app.all('*', function(req, res, next) {
 });
 
 app.all('/ok', function(req, res, next) {
-	res.send('1111')
+	setTimeout(() => {
+		res.send('1111')
+	},2000)
+})
+app.all('/ok2', function(req, res, next) {
+	setTimeout(() => {
+		res.status(407)
+		res.send('1111')
+	},2000)
 })
 
 // 初始化插件 ;
