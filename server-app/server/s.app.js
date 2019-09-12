@@ -32,7 +32,7 @@ app.all('*', function(req, res, next) {
 });
 
 app.all('/aa', function(req, res, next) {
-	setTime(() => {
+	setTimeout(() => {
 		res.send('1111')
 	},1000)
 	
