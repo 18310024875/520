@@ -35,6 +35,7 @@ app.all('/ok', function(req, res, next) {
 	setTimeout(() => {
 		res.send('1111')
 	},2000)
+	next()
 })
 app.all('/ok2', function(req, res, next) {
 	res.status(407)
